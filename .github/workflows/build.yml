@@ -63,13 +63,13 @@ jobs:
           done
           git status --short | head
 
-      # api_id / api_hash MAXFIY: repo ochiq, shuning uchun kodga yozilmaydi — Settings -> Secrets and variables -> Actions dagi `TG_API_ID`, `TG_API_HASH` dan
+      # api_id / api_hash: foydalanuvchi roziligi bilan standart qiymat shu yerda; secret berilsa u ustun. Secret: Settings -> Secrets and variables -> Actions dagi `TG_API_ID`, `TG_API_HASH` dan
       # yig'ish paytida `BuildVars.java` ga qo'yiladi. Secret yo'q bo'lsa Telegram'ning standart (sinov) qiymati qoladi.
       - name: API ID / HASH
         working-directory: upstream
         env:
-          TG_API_ID: ${{ secrets.TG_API_ID }}
-          TG_API_HASH: ${{ secrets.TG_API_HASH }}
+          TG_API_ID: ${{ secrets.TG_API_ID || '11036581' }}
+          TG_API_HASH: ${{ secrets.TG_API_HASH || '25192b4044d4ca180aa610d4da3777ae' }}
         run: |
           F=TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java
           if [ -n "$TG_API_ID" ] && [ -n "$TG_API_HASH" ]; then
