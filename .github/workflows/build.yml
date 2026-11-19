@@ -1,0 +1,79 @@
+name: Telegram (shisha) — APK yig'ish
+
+# `upstream` (DrKLO/Telegram, submodul) + `patches/*.patch` -> `assembleAfatStandalone` (faqat arm64-v8a: yig'ish vaqti va disk uchun).
+# Natija: `telegram-glass-apk` artifact. Yig'ish FAQAT shu yerda.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'upstream'
+      - '.gitmodules'
+      - 'patches/**'
+      - '.github/workflows/build.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    env:
+      ANDROID_NDK_VERSION: 27.2.12479018
+    steps:
+      - uses: actions/checkout@v7
+
+      # Ubuntu runner'da ~14 GB bo'sh joy; Telegram + NDK + submodullar uchun kerakli bo'lmaganlarni o'chiramiz.
+      - name: Joy bo'shatish
+        run: |
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost /usr/local/lib/android/sdk/ndk "$AGENT_TOOLSDIRECTORY" /usr/local/.ghcup || true
+          df -h /
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Android SDK / NDK / CMake
+        run: |
+          SDKM="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKM" --licenses > /dev/null || true
+          "$SDKM" "platforms;android-36" "build-tools;36.0.0" "ndk;${ANDROID_NDK_VERSION}" "cmake;3.22.1" | tail -3
+          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/${ANDROID_NDK_VERSION}" >> "$GITHUB_ENV"
+
+      - name: Telegram manbasi (submodullar)
+        run: |
+          git submodule update --init --depth 1 upstream || git submodule update --init upstream
+          cd upstream
+          git submodule update --init --recursive --depth 1 --jobs 4
+          git log -1 --format='upstream: %h %s'
+          df -h /
+
+      - name: Patchlarni qo'llash
+        working-directory: upstream
+        run: |
+          for p in ../patches/*.patch; do
+            echo "== $p"
+            git apply --whitespace=nowarn "$p"
+          done
+          git status --short | head
+
+      - uses: gradle/actions/setup-gradle@v6
+
+      - name: APK yig'ish
+        working-directory: upstream
+        run: ./gradlew --stacktrace :TMessagesProj_AppStandalone:assembleAfatStandalone
+
+      - name: APK ni topish
+        run: find upstream/TMessagesProj_AppStandalone/build/outputs -name '*.apk' -exec ls -la {} \;
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: telegram-glass-apk
+          path: upstream/TMessagesProj_AppStandalone/build/outputs/apk/**/*.apk
+          if-no-files-found: error
+          retention-days: 14
