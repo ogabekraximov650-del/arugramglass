@@ -1,0 +1,441 @@
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
+index dae4ce37..0f13fee3 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
+@@ -2428,8 +2428,10 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+ 
+     @Override
+     public void draw(@NonNull Canvas canvas) {
+-
+-
++        if (org.telegram.ui.Components.GlassFrameDrawable.isCapturing()) {
++            return;
++        }
++        org.telegram.ui.Components.GlassFrameDrawable.drawBarBackdrop(this, canvas, getMeasuredWidth(), getMeasuredHeight());
+         super.draw(canvas);
+         org.telegram.ui.Components.GlassFrameDrawable.drawBarEdge(canvas, getMeasuredWidth(), getMeasuredHeight());
+     }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Bulletin.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Bulletin.java
+index ffd92c71..ae0d6583 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Bulletin.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Bulletin.java
+@@ -1251,7 +1251,7 @@ public class Bulletin {
+                 if (hasSavedAlpha) {
+                     canvas.saveLayerAlpha(0, 0, getWidth(), getHeight(), alpha, Canvas.ALL_SAVE_FLAG);
+                 }
+-                background.draw(canvas);
++                drawBackgroundGlass(canvas);
+                 super.dispatchDraw(canvas);
+                 if (clip) {
+                     if (clipPaint == null) {
+@@ -1279,11 +1279,18 @@ public class Bulletin {
+                 canvas.restore();
+                 invalidate();
+             } else {
+-                background.draw(canvas);
++                drawBackgroundGlass(canvas);
+                 super.dispatchDraw(canvas);
+             }
+         }
+ 
++        private void drawBackgroundGlass(Canvas canvas) {
++            final android.graphics.Rect bb = background.getBounds();
++            GlassFrameDrawable.beforeSurface(this, canvas, bb, dp(16));
++            background.draw(canvas);
++            GlassFrameDrawable.afterSurface(canvas, bb, dp(16));
++        }
++
+         protected int getThemedColor(int key) {
+             return Theme.getColor(key, resourcesProvider);
+         }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/GlassFrameDrawable.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/GlassFrameDrawable.java
+index 715c60b3..125d315a 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/GlassFrameDrawable.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/GlassFrameDrawable.java
+@@ -11,7 +11,6 @@ import android.graphics.Rect;
+ import android.graphics.RectF;
+ import android.graphics.drawable.Drawable;
+ import android.graphics.drawable.DrawableWrapper;
+-
+ import android.os.SystemClock;
+ import android.view.View;
+ 
+@@ -20,9 +19,9 @@ import org.telegram.ui.LaunchActivity;
+ import org.telegram.ui.QrShare.QrGlass;
+ 
+ /**
+- * UZ: Ichki fon (dialog, sheet, menyu) ustiga QR ekranidagi shisha: yaltiroq qatlam + qirra (rim). Android 10+ da ishlaydi.
+- * EN: The QR screen glass (top sheen + baked rim) drawn over an inner background (dialog, sheet, popup). Android 10+.
+- * RU: Steklo ekrana QR (blik + obodok) poverkh vnutrennego fona (dialog, sheet, menyu). Android 10+.
++ * UZ: QR ekranidagi shisha (orqa fon xiraligi + yaltiroq qatlam + qirra) dialog, sheet, menyu, panel va boshqa yuzalar uchun. Android 10+.
++ * EN: The QR screen glass (blurred backdrop + sheen + rim) for dialogs, sheets, popups, bars and other surfaces. Android 10+.
++ * RU: Steklo ekrana QR (razmytyj fon + blik + obodok) dlya dialogov, sheet, menyu, panelej i drugih poverkhnostej. Android 10+.
+  */
+ public class GlassFrameDrawable extends DrawableWrapper {
+ 
+@@ -44,7 +43,11 @@ public class GlassFrameDrawable extends DrawableWrapper {
+ 
+     @Override
+     public void draw(Canvas canvas) {
+-        Rect b = getBounds();
++        if (capturing) {
++            super.draw(canvas);
++            return;
++        }
++        final Rect b = getBounds();
+         final Drawable inner = getDrawable();
+         pad.setEmpty();
+         if (inner != null) {
+@@ -53,8 +56,8 @@ public class GlassFrameDrawable extends DrawableWrapper {
+         rect.set(b.left + pad.left, b.top + pad.top, b.right - pad.right, b.bottom - pad.bottom);
+         final boolean ok = inner != null && rect.width() >= dp(8) && rect.height() >= dp(8);
+         final float rad = ok ? Math.min(radiusIsPx ? radius : dp(radius), Math.min(rect.width(), rect.height()) / 2f) : 0;
+-        if (ok) {
+-            drawBackdrop(canvas, rad);
++        if (ok && getCallback() instanceof View) {
++            drawBackdropRect((View) getCallback(), canvas, rect, rad, alpha);
+         }
+         super.draw(canvas);
+         if (!ok) {
+@@ -68,37 +71,54 @@ public class GlassFrameDrawable extends DrawableWrapper {
+         }
+     }
+ 
+-    // UZ: Orqadagi ekranning xiralashtirilgan nusxasi (1/8 masshtab + stack blur), shisha ostiga chiziladi. Android 6+.
+-    // EN: A blurred copy of the screen behind (1/8 scale + stack blur) drawn under the glass.
+-    // RU: Razmytaya kopiya ekrana pod steklom (masshtab 1/8 + stack blur).
+-    private static final int BACKDROP_SCALE = 8;
++    @Override
++    public void setAlpha(int alpha) {
++        this.alpha = alpha;
++        super.setAlpha(alpha);
++    }
++
++    @Override
++    public ColorFilter getColorFilter() {
++        final Drawable inner = getDrawable();
++        return inner != null ? inner.getColorFilter() : null;
++    }
++
++    // ---------------------------------------------------------------------------------------------------------------
++    // UZ: Orqa fon xiraligi: orqadagi ekranning 1/8 masshtabli nusxasi + stack blur. Nusxa chizish jarayonidan tashqarida
++    //     (postOnAnimation) olinadi, shuning uchun chizish buzilmaydi.
++    // EN: Backdrop blur: a 1/8-scale copy of the screen behind + stack blur. The copy is taken outside the draw pass
++    //     (postOnAnimation), so drawing is not disturbed.
++    // RU: Razmytie fona: kopiya ekrana v masshtabe 1/8 + stack blur. Kopiya beretsya vne prokhoda risovaniya.
++    // ---------------------------------------------------------------------------------------------------------------
++
++    private static final int SCALE = 8;
++    private static boolean capturing;
++
++    public static boolean isCapturing() {
++        return capturing;
++    }
++
++    // --- the whole screen behind a dialog / sheet / popup (the activity window)
+     private static Bitmap backdrop;
+     private static long backdropTime;
+-    private static boolean capturing;
+-    private final Path clipPath = new Path();
+-    private final int[] loc = new int[2];
+-    private final Paint backdropPaint = new Paint(Paint.FILTER_BITMAP_FLAG);
++    private static boolean backdropPending;
++    private static final Path clipPath = new Path();
++    private static final int[] loc = new int[2];
++    private static final Paint backdropPaint = new Paint(Paint.FILTER_BITMAP_FLAG);
+ 
+-    private static Bitmap getBackdrop() {
+-        if (capturing) {
+-            return backdrop;
+-        }
+-        final long now = SystemClock.uptimeMillis();
+-        if (backdrop != null && now - backdropTime < 1500) {
+-            return backdrop;
+-        }
++    private static void captureBackdrop() {
+         final LaunchActivity activity = LaunchActivity.instance;
+         if (activity == null || activity.getWindow() == null) {
+-            return backdrop;
++            return;
+         }
+         final View root = activity.getWindow().getDecorView();
+         final int w = root.getWidth(), h = root.getHeight();
+         if (w <= 0 || h <= 0) {
+-            return backdrop;
++            return;
+         }
+-        final int bw = Math.max(1, w / BACKDROP_SCALE), bh = Math.max(1, h / BACKDROP_SCALE);
+-        Bitmap bmp = backdrop;
++        final int bw = Math.max(1, w / SCALE), bh = Math.max(1, h / SCALE);
+         try {
++            Bitmap bmp = backdrop;
+             if (bmp == null || bmp.getWidth() != bw || bmp.getHeight() != bh) {
+                 bmp = Bitmap.createBitmap(bw, bh, Bitmap.Config.ARGB_8888);
+             }
+@@ -106,7 +126,7 @@ public class GlassFrameDrawable extends DrawableWrapper {
+             capturing = true;
+             try {
+                 final Canvas c = new Canvas(bmp);
+-                c.scale(1f / BACKDROP_SCALE, 1f / BACKDROP_SCALE);
++                c.scale(1f / SCALE, 1f / SCALE);
+                 root.draw(c);
+             } catch (Throwable ignore) {
+             } finally {
+@@ -114,30 +134,41 @@ public class GlassFrameDrawable extends DrawableWrapper {
+             }
+             Utilities.stackBlurBitmap(bmp, 8);
+             backdrop = bmp;
+-            backdropTime = now;
++            backdropTime = SystemClock.uptimeMillis();
+         } catch (Throwable ignore) {
+         }
+-        return backdrop;
+     }
+ 
+-    private void drawBackdrop(Canvas canvas, float rad) {
+-        final Callback cb = getCallback();
+-        if (!(cb instanceof View) || capturing) {
++    /** UZ: view ostidagi yumaloq to'rtburchakka xira fon chizadi. EN: draws the blurred backdrop into a rounded rect of the view. RU: risuet razmytyj fon. */
++    public static void drawBackdropRect(final View view, Canvas canvas, RectF r, float rad, int alpha) {
++        if (capturing || view == null || !view.isAttachedToWindow()) {
+             return;
+         }
+         try {
+-            final View view = (View) cb;
+-            final Bitmap bmp = getBackdrop();
++            if (backdrop == null || SystemClock.uptimeMillis() - backdropTime > 1500) {
++                if (!backdropPending) {
++                    backdropPending = true;
++                    view.postOnAnimation(new Runnable() {
++                        @Override
++                        public void run() {
++                            backdropPending = false;
++                            captureBackdrop();
++                            view.invalidate();
++                        }
++                    });
++                }
++            }
++            final Bitmap bmp = backdrop;
+             if (bmp == null) {
+                 return;
+             }
+             view.getLocationOnScreen(loc);
+             clipPath.rewind();
+-            clipPath.addRoundRect(rect, rad, rad, Path.Direction.CW);
++            clipPath.addRoundRect(r, rad, rad, Path.Direction.CW);
+             canvas.save();
+             canvas.clipPath(clipPath);
+             canvas.translate(-loc[0], -loc[1]);
+-            canvas.scale(BACKDROP_SCALE, BACKDROP_SCALE);
++            canvas.scale(SCALE, SCALE);
+             backdropPaint.setAlpha(alpha);
+             canvas.drawBitmap(bmp, 0, 0, backdropPaint);
+             canvas.restore();
+@@ -145,68 +176,155 @@ public class GlassFrameDrawable extends DrawableWrapper {
+         }
+     }
+ 
+-    @Override
+-    public void setAlpha(int alpha) {
+-        this.alpha = alpha;
+-        super.setAlpha(alpha);
++    // --- the strip under a bar (ActionBar): the content of its own window right under it, refreshed every ~150 ms
++    private static Bitmap stripBmp;
++    private static long stripTime;
++    private static boolean stripPending;
++    private static View stripOwner;
++    private static final int[] locA = new int[2], locB = new int[2];
++    private static final Rect stripSrc = new Rect();
++
++    private static void captureStrip(View bar) {
++        final View root = bar.getRootView();
++        final int w = bar.getWidth(), h = bar.getHeight();
++        if (root == null || w <= 0 || h <= 0) {
++            return;
++        }
++        try {
++            bar.getLocationOnScreen(locA);
++            root.getLocationOnScreen(locB);
++            final int dx = locA[0] - locB[0], dy = locA[1] - locB[1];
++            final int bw = Math.max(1, w / SCALE), bh = Math.max(1, h / SCALE);
++            Bitmap bmp = stripBmp;
++            if (bmp == null || bmp.getWidth() != bw || bmp.getHeight() != bh) {
++                bmp = Bitmap.createBitmap(bw, bh, Bitmap.Config.ARGB_8888);
++            }
++            bmp.eraseColor(0);
++            capturing = true;
++            try {
++                final Canvas c = new Canvas(bmp);
++                c.scale(bw / (float) w, bh / (float) h);
++                c.translate(-dx, -dy);
++                c.clipRect(dx, dy, dx + w, dy + h);
++                root.draw(c);
++            } catch (Throwable ignore) {
++            } finally {
++                capturing = false;
++            }
++            Utilities.stackBlurBitmap(bmp, 6);
++            stripBmp = bmp;
++            stripOwner = bar;
++            stripTime = SystemClock.uptimeMillis();
++        } catch (Throwable ignore) {
++        }
+     }
+ 
+-    @Override
+-    public ColorFilter getColorFilter() {
+-        final Drawable inner = getDrawable();
+-        return inner != null ? inner.getColorFilter() : null;
++    /** UZ: Panel ostiga xira fon. EN: blurred backdrop under a bar. RU: razmytyj fon pod panelyu. */
++    public static void drawBarBackdrop(final View bar, Canvas canvas, int width, int height) {
++        if (capturing || bar == null || width <= 0 || height <= 0 || !bar.isAttachedToWindow()) {
++            return;
++        }
++        try {
++            if (stripBmp == null || stripOwner != bar || SystemClock.uptimeMillis() - stripTime > 150) {
++                if (!stripPending) {
++                    stripPending = true;
++                    bar.postOnAnimation(new Runnable() {
++                        @Override
++                        public void run() {
++                            stripPending = false;
++                            captureStrip(bar);
++                            bar.invalidate();
++                        }
++                    });
++                }
++            }
++            if (stripBmp != null && stripOwner == bar) {
++                stripSrc.set(0, 0, stripBmp.getWidth(), stripBmp.getHeight());
++                canvas.drawBitmap(stripBmp, stripSrc, new Rect(0, 0, width, height), backdropPaint);
++            }
++        } catch (Throwable ignore) {
++        }
+     }
+ 
++    // ---------------------------------------------------------------------------------------------------------------
++
++    private static final RectF TMP_RECT = new RectF();
++
+     /** UZ: Panel (ActionBar) ostki chizig'i. EN: bottom edge line of a bar. RU: nizhnyaya liniya paneli. */
+     public static void drawBarEdge(Canvas canvas, int width, int height) {
+-        if (width <= 0 || height <= 0) {
++        if (capturing || width <= 0 || height <= 0) {
+             return;
+         }
+         try {
+-            final RectF r = AndroidUtilitiesRect.get();
+             final float ext = dp(30);
+-            r.set(-ext, -ext, width + ext, height);
++            TMP_RECT.set(-ext, -ext, width + ext, height);
+             canvas.save();
+             canvas.clipRect(0, 0, width, height);
+-            QrGlass.drawRim(canvas, r, dp(18), QrGlass.RIM_BIG, 0.8f);
++            QrGlass.drawRim(canvas, TMP_RECT, dp(18), QrGlass.RIM_BIG, 0.8f);
+             canvas.restore();
+         } catch (Throwable ignore) {
+         }
+     }
+ 
+-    private static final RectF SCREEN_RECT = new RectF();
+-
+     /** UZ: Butun ekran ramkasi (yuqori yaltiroq + qirra). EN: whole-screen frame (top sheen + rim). RU: ramka vsego ekrana. */
+     public static void drawScreenFrame(Canvas canvas, int width, int height) {
+-        if (width <= 0 || height <= 0) {
++        if (capturing || width <= 0 || height <= 0) {
+             return;
+         }
+         try {
+-            SCREEN_RECT.set(dp(1), dp(1), width - dp(1), height - dp(1));
++            TMP_RECT.set(dp(1), dp(1), width - dp(1), height - dp(1));
+             final float r = dp(24);
+-            QrGlass.drawSheenRound(canvas, SCREEN_RECT, r, false, 0.7f);
+-            QrGlass.drawRim(canvas, SCREEN_RECT, r, QrGlass.RIM_BIG, 0.5f);
++            QrGlass.drawSheenRound(canvas, TMP_RECT, r, false, 0.7f);
++            QrGlass.drawRim(canvas, TMP_RECT, r, QrGlass.RIM_BIG, 0.5f);
+         } catch (Throwable ignore) {
+         }
+     }
+ 
+     /** UZ: Xabar pufakchasi qirrasi. EN: chat bubble rim. RU: obodok puzyrya soobshcheniya. */
+     public static void drawBubbleRim(Canvas canvas, Rect bounds) {
+-        if (bounds == null || bounds.height() < dp(24) || bounds.width() < dp(24)) {
++        if (capturing || bounds == null || bounds.height() < dp(24) || bounds.width() < dp(24)) {
+             return;
+         }
+         try {
+-            SCREEN_RECT.set(bounds.left + dp(2), bounds.top + dp(2), bounds.right - dp(2), bounds.bottom - dp(2));
+-            QrGlass.drawRim(canvas, SCREEN_RECT, dp(14), QrGlass.RIM_BIG, 0.55f);
++            TMP_RECT.set(bounds.left + dp(2), bounds.top + dp(2), bounds.right - dp(2), bounds.bottom - dp(2));
++            QrGlass.drawRim(canvas, TMP_RECT, dp(14), QrGlass.RIM_BIG, 0.55f);
+         } catch (Throwable ignore) {
+         }
+     }
+ 
+-    private static final class AndroidUtilitiesRect {
+-        private static final RectF RECT = new RectF();
++    /** UZ: Ixtiyoriy yumaloq yuza uchun yaltiroq + qirra (o'zi fon chizadigan oynalar). EN: sheen + rim for any rounded surface. RU: blik + obodok. */
++    public static void drawGlassRect(View view, Canvas canvas, RectF r, float radiusPx) {
++        if (capturing || r == null || r.width() < dp(8) || r.height() < dp(8)) {
++            return;
++        }
++        try {
++            final float rad = Math.min(radiusPx, Math.min(r.width(), r.height()) / 2f);
++            if (view != null) {
++                drawBackdropRect(view, canvas, r, rad, 255);
++            }
++            QrGlass.drawSheenRound(canvas, r, rad, false, 1f);
++            QrGlass.drawRim(canvas, r, rad, QrGlass.RIM_BIG, 1f);
++        } catch (Throwable ignore) {
++        }
++    }
+ 
+-        static RectF get() {
+-            return RECT;
++    /** UZ: o'zi fon chizadigan yuza OLDIDAN: xira fon. EN: before a self-drawn surface: blurred backdrop. RU: pered poverkhnostyu: razmytyj fon. */
++    public static void beforeSurface(View view, Canvas canvas, Rect bounds, float radiusPx) {
++        if (capturing || bounds == null || bounds.width() < dp(8) || bounds.height() < dp(8)) {
++            return;
+         }
++        TMP_RECT2.set(bounds);
++        drawBackdropRect(view, canvas, TMP_RECT2, Math.min(radiusPx, Math.min(TMP_RECT2.width(), TMP_RECT2.height()) / 2f), 255);
+     }
++
++    /** UZ: o'zi fon chizadigan yuzadan KEYIN: yaltiroq + qirra. EN: after a self-drawn surface: sheen + rim. RU: posle poverkhnosti: blik + obodok. */
++    public static void afterSurface(Canvas canvas, Rect bounds, float radiusPx) {
++        if (capturing || bounds == null) {
++            return;
++        }
++        TMP_RECT2.set(bounds);
++        drawGlassRect(null, canvas, TMP_RECT2, radiusPx);
++    }
++
++    private static final RectF TMP_RECT2 = new RectF();
+ }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/GroupCallActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/GroupCallActivity.java
+index 7818a44d..7a996d93 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/GroupCallActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/GroupCallActivity.java
+@@ -2461,7 +2461,7 @@ public class GroupCallActivity extends BottomSheet implements NotificationCenter
+         NotificationCenter.getGlobalInstance().addWeakObserver(this, NotificationCenter.webRtcMicAmplitudeEvent);
+         NotificationCenter.getGlobalInstance().addWeakObserver(this, NotificationCenter.didEndCall);
+ 
+-        shadowDrawable = context.getResources().getDrawable(R.drawable.sheet_shadow_round).mutate();
++        shadowDrawable = new org.telegram.ui.Components.GlassFrameDrawable(context.getResources().getDrawable(R.drawable.sheet_shadow_round).mutate(), 16);
+ 
+         bigMicDrawable = new RLottieDrawable(R.raw.voip_filled, dp(46), dp(46), true, null);
+         handDrawables = new RLottieDrawable(R.raw.hand_2, dp(46), dp(46), true, null);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/bots/BotWebViewSheet.java b/TMessagesProj/src/main/java/org/telegram/ui/bots/BotWebViewSheet.java
+index 7dd4464f..243afb8e 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/bots/BotWebViewSheet.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/bots/BotWebViewSheet.java
+@@ -2710,6 +2710,8 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
+ 
+                 AndroidUtilities.rectTmp.set(lerp(swipeContainer.getLeft(), 0, fullscreenProgress), swipeContainer.getTranslationY() + AndroidUtilities.dp(24), lerp(swipeContainer.getRight(), getWidth(), fullscreenProgress), getHeight() - bottomTabsHeight);
+                 canvas.drawRect(AndroidUtilities.rectTmp, backgroundPaint);
++                AndroidUtilities.rectTmp.set(lerp(swipeContainer.getLeft(), 0, fullscreenProgress), lerp(swipeContainer.getTranslationY(), 0, actionBarTransitionProgress), lerp(swipeContainer.getRight(), getWidth(), fullscreenProgress), getHeight() - bottomTabsHeight);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, radius);
+ 
+                 canvas.restore();
+             }
