@@ -1,8 +1,8 @@
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
-index 7fc7292d..75061370 100644
+index 7fc7292d..20db1124 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
-@@ -9136,7 +9136,23 @@ public class Theme {
+@@ -9136,7 +9136,20 @@ public class Theme {
                  return animatingColors.valueAt(index);
              }
          }
@@ -12,14 +12,11 @@ index 7fc7292d..75061370 100644
 +
 +    /** UZ: sirt ranglarini yarim shaffof qiladi (xira shisha). EN: makes surface colors translucent (frosted glass). RU: delaet poverhnosti poluprozrachnymi. */
 +    private static int glassSurface(int key, int color) {
-+        if (android.os.Build.VERSION.SDK_INT < 31) {
-+            return color;
-+        }
 +        int alpha;
 +        if (key == key_windowBackgroundWhite || key == key_actionBarDefault || key == key_dialogBackground || key == key_chats_menuBackground) {
-+            alpha = 0xB8;
++            alpha = 0xA0;
 +        } else if (key == key_windowBackgroundGray || key == key_dialogBackgroundGray || key == key_graySection) {
-+            alpha = 0xA8;
++            alpha = 0x90;
 +        } else {
 +            return color;
 +        }
@@ -28,21 +25,19 @@ index 7fc7292d..75061370 100644
  
      /**
 diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
-index 1dd2ffee..7ea2d6cc 100644
+index 1dd2ffee..32462f7c 100644
 --- a/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
 +++ b/TMessagesProj/src/main/java/org/telegram/ui/LaunchActivity.java
-@@ -448,7 +448,14 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
+@@ -448,7 +448,12 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
          } catch (Throwable ignore) {
  
          }
 -        getWindow().setBackgroundDrawable(new ActivityWindowEmptyBackgroundDrawable());
-+        if (Build.VERSION.SDK_INT >= 31) {
++        {
 +            // UZ: shisha orqasidagi rangli fon. EN: colorful backdrop behind the glass. RU: tsvetnoy fon pod steklom.
 +            getWindow().setBackgroundDrawable(new android.graphics.drawable.GradientDrawable(
 +                    android.graphics.drawable.GradientDrawable.Orientation.TL_BR,
 +                    new int[]{0xff3a6df0, 0xff8e4bd8, 0xffe2557a, 0xff1fb5c9}));
-+        } else {
-+            getWindow().setBackgroundDrawable(new ActivityWindowEmptyBackgroundDrawable());
 +        }
          getWindow().setFormat(PixelFormat.OPAQUE);
  
