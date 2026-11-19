@@ -1,0 +1,598 @@
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/CacheControlActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/CacheControlActivity.java
+index 9c4b7da8..04a13220 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/CacheControlActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/CacheControlActivity.java
+@@ -3257,7 +3257,7 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
+ 
+     private void deldegagteThemeColors() {
+         if (bottomSheet != null) {
+-            bottomSheet.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(Theme.getColor(Theme.key_dialogBackground)));
++            bottomSheet.setBackgroundColor(Theme.getColor(Theme.key_dialogBackground));
+         }
+ 
+         if (actionTextView != null) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/CalendarActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/CalendarActivity.java
+index b31af223..11c100d1 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/CalendarActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/CalendarActivity.java
+@@ -299,7 +299,7 @@ public class CalendarActivity extends BaseFragment implements NotificationCenter
+                 }
+             }
+         };
+-        contentView.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getThemedColor(Theme.key_windowBackgroundGray)));
++        contentView.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundGray));
+         contentView.addView(simpleActionBar);
+         simpleActionBar.setTitle(LocaleController.getString(R.string.Calendar));
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChannelColorActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChannelColorActivity.java
+index 2bbf188a..e97f413c 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChannelColorActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChannelColorActivity.java
+@@ -403,7 +403,7 @@ public class ChannelColorActivity extends BaseFragment implements NotificationCe
+             setHasOwnBackground(true);
+             listView.setSectionsDrawBackground(true);
+         } else {
+-            listView.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getThemedColor(Theme.key_windowBackgroundGray)));
++            listView.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundGray));
+         }
+         listView.setAdapter(adapter = new Adapter());
+         layoutManager = new GridLayoutManager(context, 3);
+@@ -1966,7 +1966,7 @@ public class ChannelColorActivity extends BaseFragment implements NotificationCe
+             }
+             AndroidUtilities.forEachViews(listView, view -> {
+                 if (view instanceof ThemeSmallPreviewView) {
+-                    view.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(Theme.getColor(Theme.key_dialogBackgroundGray, resourcesProvider)));
++                    view.setBackgroundColor(Theme.getColor(Theme.key_dialogBackgroundGray, resourcesProvider));
+                 }
+             });
+             if (changed && adapter != null) {
+@@ -2226,7 +2226,7 @@ public class ChannelColorActivity extends BaseFragment implements NotificationCe
+             listView.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundGray)); // a channel's list draws its background itself
+         }
+         if (buttonContainer != null) {
+-            buttonContainer.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getThemedColor(Theme.key_windowBackgroundGray)));
++            buttonContainer.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundGray));
+         }
+     }
+ 
+@@ -2250,7 +2250,7 @@ public class ChannelColorActivity extends BaseFragment implements NotificationCe
+             adapter.notifyDataSetChanged();
+             AndroidUtilities.forEachViews(listView, this::updateColors);
+             if (isGroup) {
+-                buttonContainer.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getThemedColor(Theme.key_windowBackgroundGray)));
++                buttonContainer.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundGray));
+             }
+             button.updateColors();
+             setNavigationBarColor(getNavigationBarColor());
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChannelWallpaperActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChannelWallpaperActivity.java
+index fdc2fe7a..5bf26633 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChannelWallpaperActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChannelWallpaperActivity.java
+@@ -348,10 +348,10 @@ public class ChannelWallpaperActivity extends BaseFragment {
+                 actionBar.setItemsColor(getThemedColor(Theme.key_actionBarDefaultIcon), false);
+             }
+             if (listView != null) {
+-                listView.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getThemedColor(Theme.key_windowBackgroundGray)));
++                listView.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundGray));
+             }
+             if (contentView != null) {
+-                contentView.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getThemedColor(Theme.key_windowBackgroundWhite)));
++                contentView.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
+             }
+         } catch (Exception e) {
+             FileLog.e(e);
+@@ -363,11 +363,11 @@ public class ChannelWallpaperActivity extends BaseFragment {
+         actionBar.setTitleColor(getThemedColor(Theme.key_actionBarDefaultTitle));
+         actionBar.setItemsColor(getThemedColor(Theme.key_actionBarDefaultIcon), false);
+         actionBar.setItemsBackgroundColor(getThemedColor(Theme.key_actionBarDefaultSelector), false);
+-        listView.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getThemedColor(Theme.key_windowBackgroundGray)));
++        listView.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundGray));
+         adapter.notifyDataSetChanged();
+         AndroidUtilities.forEachViews(listView, this::updateColors);
+         setNavigationBarColor(getNavigationBarColor());
+-        contentView.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getThemedColor(Theme.key_windowBackgroundWhite)));
++        contentView.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
+     }
+ 
+     private void updateColors(View view) {
+@@ -375,7 +375,7 @@ public class ChannelWallpaperActivity extends BaseFragment {
+             ((TextInfoPrivacyCell) view).setBackgroundColor(getThemedColor(Theme.key_windowBackgroundGray));
+             ((TextInfoPrivacyCell) view).setForeground(Theme.getThemedDrawableByKey(getContext(), R.drawable.greydivider, Theme.key_windowBackgroundGrayShadow, resourceProvider));
+         } else {
+-            view.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getThemedColor(Theme.key_windowBackgroundWhite)));
++            view.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
+             if (view instanceof TextCell) {
+                 ((TextCell) view).updateColors();
+             } else if (view instanceof ChannelColorActivity.ThemeChooser) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreator.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreator.java
+index 3fb3383f..d214b185 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreator.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/AlertsCreator.java
+@@ -3425,7 +3425,7 @@ public class AlertsCreator {
+             return false;
+         });
+ 
+-        dialog.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(Theme.getColor(Theme.key_voipgroup_dialogBackground)));
++        dialog.setBackgroundColor(Theme.getColor(Theme.key_voipgroup_dialogBackground));
+         dialog.show();
+         dialog.setTextColor(Theme.getColor(Theme.key_voipgroup_actionBarItems));
+ 
+@@ -3554,7 +3554,7 @@ public class AlertsCreator {
+         });
+         AlertDialog dialog = builder.create();
+ 
+-        dialog.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(Theme.getColor(Theme.key_voipgroup_dialogBackground)));
++        dialog.setBackgroundColor(Theme.getColor(Theme.key_voipgroup_dialogBackground));
+         dialog.show();
+         dialog.setTextColor(Theme.getColor(Theme.key_voipgroup_actionBarItems));
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java
+index 7a082521..e820d96a 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiView.java
+@@ -5959,12 +5959,12 @@ public class EmojiView extends FrameLayout implements
+         } else {
+             setBackgroundColor(getThemedColor(Theme.key_chat_emojiPanelBackground));
+             if (needEmojiSearch) {
+-                bottomTabContainerBackground.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getThemedColor(Theme.key_chat_emojiPanelBackground)));
++                bottomTabContainerBackground.setBackgroundColor(getThemedColor(Theme.key_chat_emojiPanelBackground));
+             }
+         }
+         if (emojiTabs != null) {
+             if (shouldDrawBackground) {
+-                emojiTabs.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getThemedColor(Theme.key_chat_emojiPanelBackground)));
++                emojiTabs.setBackgroundColor(getThemedColor(Theme.key_chat_emojiPanelBackground));
+                 emojiTabsShadow.setBackgroundColor(getThemedColor(Theme.key_chat_emojiPanelShadowLine));
+             } else {
+                 emojiTabs.setBackground(null);
+@@ -5986,7 +5986,7 @@ public class EmojiView extends FrameLayout implements
+                 continue;
+             }
+             if (shouldDrawBackground) {
+-                searchField.backgroundView.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getThemedColor(Theme.key_chat_emojiPanelBackground)));
++                searchField.backgroundView.setBackgroundColor(getThemedColor(Theme.key_chat_emojiPanelBackground));
+             } else {
+                 searchField.backgroundView.setBackground(null);
+             }
+@@ -6010,7 +6010,7 @@ public class EmojiView extends FrameLayout implements
+             stickersTab.setIndicatorColor(getThemedColor(Theme.key_chat_emojiPanelStickerPackSelectorLine));
+             stickersTab.setUnderlineColor(getThemedColor(Theme.key_chat_emojiPanelShadowLine));
+             if (shouldDrawBackground) {
+-                stickersTab.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getThemedColor(Theme.key_chat_emojiPanelBackground)));
++                stickersTab.setBackgroundColor(getThemedColor(Theme.key_chat_emojiPanelBackground));
+             } else {
+                 stickersTab.setBackground(null);
+             }
+@@ -6019,7 +6019,7 @@ public class EmojiView extends FrameLayout implements
+             gifTabs.setIndicatorColor(getThemedColor(Theme.key_chat_emojiPanelStickerPackSelectorLine));
+             gifTabs.setUnderlineColor(getThemedColor(Theme.key_chat_emojiPanelShadowLine));
+             if (shouldDrawBackground) {
+-                gifTabs.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getThemedColor(Theme.key_chat_emojiPanelBackground)));
++                gifTabs.setBackgroundColor(getThemedColor(Theme.key_chat_emojiPanelBackground));
+             } else {
+                 gifTabs.setBackground(null);
+             }
+@@ -6120,7 +6120,7 @@ public class EmojiView extends FrameLayout implements
+                 setBackgroundResource(R.drawable.smiles_popup);
+                 getBackground().setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_chat_emojiPanelBackground), PorterDuff.Mode.MULTIPLY));
+                 if (needEmojiSearch && shouldDrawBackground) {
+-                    bottomTabContainerBackground.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getThemedColor(Theme.key_chat_emojiPanelBackground)));
++                    bottomTabContainerBackground.setBackgroundColor(getThemedColor(Theme.key_chat_emojiPanelBackground));
+                 }
+                 currentBackgroundType = 1;
+             }
+@@ -6134,7 +6134,7 @@ public class EmojiView extends FrameLayout implements
+                 if (shouldDrawBackground) {
+                     setBackgroundColor(getThemedColor(Theme.key_chat_emojiPanelBackground));
+                     if (needEmojiSearch) {
+-                        bottomTabContainerBackground.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getThemedColor(Theme.key_chat_emojiPanelBackground)));
++                        bottomTabContainerBackground.setBackgroundColor(getThemedColor(Theme.key_chat_emojiPanelBackground));
+                     }
+                 }
+                 currentBackgroundType = 0;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/InviteLinkBottomSheet.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/InviteLinkBottomSheet.java
+index 4b88c23a..5c75d098 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/InviteLinkBottomSheet.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/InviteLinkBottomSheet.java
+@@ -458,7 +458,7 @@ public class InviteLinkBottomSheet extends BottomSheet {
+                 titleTextView.setLinkTextColor(Theme.getColor(Theme.key_dialogTextLink));
+                 titleTextView.setHighlightColor(Theme.getColor(Theme.key_dialogLinkSelection));
+                 if (!titleVisible) {
+-                    titleTextView.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(Theme.getColor(Theme.key_windowBackgroundWhite)));
++                    titleTextView.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+                 }
+             }
+             if (listView != null) {
+@@ -479,7 +479,7 @@ public class InviteLinkBottomSheet extends BottomSheet {
+             titleTextView.setLinkTextColor(Theme.getColor(Theme.key_dialogTextLink));
+             titleTextView.setHighlightColor(Theme.getColor(Theme.key_dialogLinkSelection));
+             if (!titleVisible) {
+-                titleTextView.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(Theme.getColor(Theme.key_windowBackgroundWhite)));
++                titleTextView.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+             }
+         }
+         listView.setGlowColor(Theme.getColor(Theme.key_dialogScrollGlow));
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/PostsSearchContainer.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/PostsSearchContainer.java
+index 6e3a397c..ff8e10d8 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/PostsSearchContainer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/PostsSearchContainer.java
+@@ -180,7 +180,7 @@ public class PostsSearchContainer extends FrameLayout {
+     }
+ 
+     public void updateColors() {
+-        emptyParentView.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(Theme.getColor(Theme.key_windowBackgroundWhite)));
++        emptyParentView.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+         emptyTitleView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
+         emptyUnderButtonTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
+         emptyTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText));
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ChatCustomReactionsEditActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ChatCustomReactionsEditActivity.java
+index ec366159..76934192 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ChatCustomReactionsEditActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ChatCustomReactionsEditActivity.java
+@@ -533,7 +533,7 @@ public class ChatCustomReactionsEditActivity extends BaseFragment implements Not
+         try {
+             super.onThemeColorsChanged();
+             if (enableReactionsCell != null && enableReactionsCell.getBackground() instanceof ColorDrawable) {
+-                enableReactionsCell.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(Theme.getColor(enableReactionsCell.isChecked() ? Theme.key_windowBackgroundChecked : Theme.key_windowBackgroundUnchecked)));
++                enableReactionsCell.setBackgroundColor(Theme.getColor(enableReactionsCell.isChecked() ? Theme.key_windowBackgroundChecked : Theme.key_windowBackgroundUnchecked));
+             }
+         } catch (Exception e) {
+             FileLog.e(e);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ReactionsContainerLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ReactionsContainerLayout.java
+index bd9d9937..253e04e9 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ReactionsContainerLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ReactionsContainerLayout.java
+@@ -733,7 +733,6 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
+             }
+             if (type == TYPE_STORY || delegate.drawBackground()) {
+                 delegate.drawRoundRect(canvas, rect, radius, getX(), getY(), 255, false);
+-                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, delegate, canvas, rect, radius, getX(), getY());
+             } else {
+                 if (blurredBackgroundDrawable != null) {
+                     rect.round(AndroidUtilities.rectTmp2);
+@@ -930,7 +929,6 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
+         if (delegate.drawBackground()) {
+             rectF.set(cx - br, cy - br, cx + br, cy + br);
+             delegate.drawRoundRect(canvas, rectF, br, getX(), getY(), alpha, false);
+-            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, delegate, canvas, rectF, br, getX(), getY());
+         } else {
+             if (blurredBackgroundDrawable1 != null) {
+                 AndroidUtilities.rectTmp.set(cx - br, cy - br, cx + br, cy + br);
+@@ -955,7 +953,6 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
+         if (delegate.drawBackground()) {
+             rectF.set(cx - sr, cy - sr, cx + sr, cy + sr);
+             delegate.drawRoundRect(canvas, rectF, sr, getX(), getY(), alpha, false);
+-            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, delegate, canvas, rectF, sr, getX(), getY());
+         } else {
+             if (blurredBackgroundDrawable2 != null) {
+                 AndroidUtilities.rectTmp.set(cx - sr, cy - sr, cx + sr, cy + sr);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/StickersAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/StickersAlert.java
+index a855a8e1..c64b490b 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/StickersAlert.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/StickersAlert.java
+@@ -2150,7 +2150,7 @@ public class StickersAlert extends BottomSheet implements NotificationCenter.Not
+         adapter.updateColors();
+ 
+         titleTextView.setHighlightColor(getThemedColor(Theme.key_dialogLinkSelection));
+-        stickerPreviewLayout.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getThemedColor(Theme.key_dialogBackground) & 0xdfffffff));
++        stickerPreviewLayout.setBackgroundColor(getThemedColor(Theme.key_dialogBackground) & 0xdfffffff);
+ 
+         optionsButton.setIconColor(getThemedColor(Theme.key_sheet_other));
+         optionsButton.setPopupItemsColor(getThemedColor(Theme.key_actionBarDefaultSubmenuItem), false);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/TopicsSidePanel.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/TopicsSidePanel.java
+index 2948713e..07a0d492 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/TopicsSidePanel.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/TopicsSidePanel.java
+@@ -460,7 +460,7 @@ public class TopicsSidePanel extends FrameLayout implements NotificationCenter.N
+             newTopicIsland = island;
+         }
+ 
+-        panel.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getThemedColor(Theme.key_windowBackgroundWhite)));
++        panel.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
+         setProgress(0);
+     }
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/GroupCallActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/GroupCallActivity.java
+index f1ec4736..6f0d9c7f 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/GroupCallActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/GroupCallActivity.java
+@@ -2046,7 +2046,7 @@ public class GroupCallActivity extends BottomSheet implements NotificationCenter
+                     builder.setNegativeButton(getString(R.string.Cancel), null);
+                     AlertDialog dialog = builder.create();
+ 
+-                    dialog.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(Theme.getColor(Theme.key_voipgroup_dialogBackground)));
++                    dialog.setBackgroundColor(Theme.getColor(Theme.key_voipgroup_dialogBackground));
+                     dialog.show();
+                     TextView button = (TextView) dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                     if (button != null) {
+@@ -2072,7 +2072,7 @@ public class GroupCallActivity extends BottomSheet implements NotificationCenter
+                         });
+                         builder.setNegativeButton(getString(R.string.Cancel), null);
+                         AlertDialog dialog = builder.create();
+-                        dialog.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(Theme.getColor(Theme.key_voipgroup_dialogBackground)));
++                        dialog.setBackgroundColor(Theme.getColor(Theme.key_voipgroup_dialogBackground));
+                         dialog.show();
+                         dialog.setTextColor(Theme.getColor(Theme.key_voipgroup_nameText));
+                     } else {
+@@ -2138,7 +2138,7 @@ public class GroupCallActivity extends BottomSheet implements NotificationCenter
+                                 });
+                                 builder.setNegativeButton(getString(R.string.Cancel), (dialog, which) -> AndroidUtilities.hideKeyboard(editText));
+                                 AlertDialog dialog = builder.create();
+-                                dialog.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(Theme.getColor(Theme.key_voipgroup_dialogBackground)));
++                                dialog.setBackgroundColor(Theme.getColor(Theme.key_voipgroup_dialogBackground));
+                                 dialog.show();
+                                 dialog.setTextColor(Theme.getColor(Theme.key_voipgroup_nameText));
+                                 if (editText != null) {
+@@ -7694,7 +7694,7 @@ public class GroupCallActivity extends BottomSheet implements NotificationCenter
+             dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+         }
+         if (!fromOverlayWindow) {
+-            dialog.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(Theme.getColor(Theme.key_voipgroup_dialogBackground)));
++            dialog.setBackgroundColor(Theme.getColor(Theme.key_voipgroup_dialogBackground));
+         }
+         dialog.show();
+         if (!fromOverlayWindow) {
+@@ -7827,7 +7827,7 @@ public class GroupCallActivity extends BottomSheet implements NotificationCenter
+             }
+             builder.setNegativeButton(getString(R.string.Cancel), null);
+             AlertDialog dialog = builder.create();
+-            dialog.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(Theme.getColor(Theme.key_voipgroup_dialogBackground)));
++            dialog.setBackgroundColor(Theme.getColor(Theme.key_voipgroup_dialogBackground));
+             dialog.show();
+             if (option == 2) {
+                 TextView button = (TextView) dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/GroupColorActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/GroupColorActivity.java
+index 9e0d9c9b..c5834e04 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/GroupColorActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/GroupColorActivity.java
+@@ -295,7 +295,7 @@ public class GroupColorActivity extends ChannelColorActivity {
+     protected void applyThemeColors() {
+         applyActionBarThemeColors();
+         if (listView != null) {
+-            listView.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getThemedColor(Theme.key_windowBackgroundGray)));
++            listView.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundGray));
+         }
+         // buttonContainer: recolor the fill of the combined background set by updateColors in place
+         if (buttonContainer != null && buttonContainer.getBackground() instanceof CombinedDrawable) {
+@@ -316,7 +316,7 @@ public class GroupColorActivity extends ChannelColorActivity {
+         CombinedDrawable combinedDrawable = new CombinedDrawable(background, shadowDrawable, 0, 0);
+         combinedDrawable.setFullsize(true);
+         buttonContainer.setBackground(combinedDrawable);
+-        listView.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getThemedColor(Theme.key_windowBackgroundGray)));
++        listView.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundGray));
+         if (profilePreview != null && !onlyActionBar) {
+             profilePreview.backgroundView.setColor(currentAccount, selectedProfileColor, false);
+             profilePreview.profileView.setColor(selectedProfileColor, false);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/IntroActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/IntroActivity.java
+index 88799278..9f8f0977 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/IntroActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/IntroActivity.java
+@@ -965,7 +965,7 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
+     private void updateColors(boolean fromTheme) {
+         startMessagingButtonBackground.setColors(new int[]{getThemedColor(Theme.key_featuredStickers_addButton), getThemedColor(Theme.key_featuredStickers_addButton2)});
+         logoDrawable.setColorFilter(Theme.multAlpha(getThemedColor(Theme.key_actionBarDefaultTitle), 0.9f), PorterDuff.Mode.MULTIPLY);
+-        fragmentView.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(Theme.getColor(Theme.key_windowBackgroundWhite)));
++        fragmentView.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+         switchLanguageTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueText4));
+         startMessagingButton.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
+         startMessagingButton.setBackground(Theme.createSimpleSelectorRoundRectDrawable(dp(24), Color.TRANSPARENT, Theme.getColor(Theme.key_featuredStickers_addButtonPressed)));
+@@ -981,7 +981,7 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
+                     eglThread.loadTexture(eglThread.telegramMaskProvider, 23, true);
+                     eglThread.updateTelegramTextures();
+ 
+-                    Intro.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(Theme.getColor(Theme.key_windowBackgroundWhite)));
++                    Intro.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+                 });
+             }
+             for (int i = 0; i < viewPager.getChildCount(); i++) {
+@@ -1023,7 +1023,7 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
+                 lastLogoColor = logoColor;
+                 logoDrawable.setColorFilter(logoColor, PorterDuff.Mode.MULTIPLY);
+             }
+-            fragmentView.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(Theme.getColor(Theme.key_windowBackgroundWhite)));
++            fragmentView.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+             if (switchLanguageTextView != null) {
+                 switchLanguageTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueText4));
+             }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/LoginActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/LoginActivity.java
+index 86e70132..c6c721e2 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/LoginActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/LoginActivity.java
+@@ -2725,7 +2725,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
+             codeField.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
+             codeField.setCursorColor(Theme.getColor(Theme.key_windowBackgroundWhiteInputFieldActivated));
+ 
+-            codeDividerView.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(Theme.getColor(Theme.key_windowBackgroundWhiteInputField)));
++            codeDividerView.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhiteInputField));
+ 
+             phoneField.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
+             phoneField.setHintTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteHintText));
+@@ -8754,7 +8754,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
+     }
+ 
+     private void updateColors() {
+-        fragmentView.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(Theme.getColor(Theme.key_windowBackgroundWhite)));
++        fragmentView.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+ 
+         backButtonFilterColor = applyColorFilter(backButtonView, Theme.getColor(Theme.key_windowBackgroundWhiteBlackText), backButtonFilterColor, PorterDuff.Mode.SRC_ATOP);
+         backButtonSelectorColor = applySelectorBackground(backButtonView, Theme.getColor(Theme.key_listSelector), backButtonSelectorColor, Theme.RIPPLE_MASK_CIRCLE_20DP);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PeerColorActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/PeerColorActivity.java
+index 0aa1a73e..eaed4761 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/PeerColorActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/PeerColorActivity.java
+@@ -1338,16 +1338,16 @@ public class PeerColorActivity extends BaseFragment implements NotificationCente
+             updateProfilePreview(true);
+             AndroidUtilities.forEachViews(listView, view -> {
+                 if (view instanceof PeerColorGrid) {
+-                    view.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getThemedColor(Theme.key_windowBackgroundWhite)));
++                    view.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
+                     ((PeerColorGrid) view).updateColors();
+                 } else if (view instanceof TextCell) {
+-                    view.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getThemedColor(Theme.key_windowBackgroundWhite)));
++                    view.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
+                     ((TextCell) view).updateColors();
+                 } else if (view instanceof SetReplyIconCell) {
+-                    view.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getThemedColor(Theme.key_windowBackgroundWhite)));
++                    view.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
+                     ((SetReplyIconCell) view).updateColors();
+                 } else if (view instanceof HeaderCell) {
+-                    view.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getThemedColor(Theme.key_windowBackgroundWhite)));
++                    view.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
+                 } else if (view instanceof GiftCell) {
+                     ((GiftCell) view).card.invalidate();
+                 } else if (view instanceof Tabs) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+index 0792c9d2..17207724 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/PhotoViewer.java
+@@ -5097,7 +5097,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+                                 .setNeutralButton(getString("Cancel", R.string.Cancel), (di, a) -> {
+                                     di.dismiss();
+                                 }).create();
+-                        dialog.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getThemedColor(Theme.key_voipgroup_dialogBackground)));
++                        dialog.setBackgroundColor(getThemedColor(Theme.key_voipgroup_dialogBackground));
+                         dialog.show();
+                         View neutralButton = dialog.getButton(Dialog.BUTTON_NEUTRAL);
+                         if (neutralButton instanceof TextView) {
+@@ -5248,7 +5248,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
+                                 .setNeutralButton(getString("Cancel", R.string.Cancel), (di, a) -> {
+                                     di.dismiss();
+                                 }).create();
+-                        dialog.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getThemedColor(Theme.key_voipgroup_dialogBackground)));
++                        dialog.setBackgroundColor(getThemedColor(Theme.key_voipgroup_dialogBackground));
+                         dialog.show();
+                         View neutralButton = dialog.getButton(Dialog.BUTTON_NEUTRAL);
+                         if (neutralButton instanceof TextView) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+index efc63588..9d87230c 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity.java
+@@ -5196,7 +5196,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+ 
+         topView = new TopView(context);
+         topView.setBackgroundColorId(peerColor, false);
+-        topView.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getThemedColor(Theme.key_windowBackgroundGray)));
++        topView.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundGray));
+         frameLayout.addView(topView);
+ 
+         animatedStatusView = new AnimatedStatusView(context, 20, 60);
+@@ -5822,7 +5822,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                 if (sharedMediaLayout != null && sharedMediaLayout.getCurrentListView() != null) {
+                     sharedMediaLayout.getCurrentListView().cancelClickRunnables(true);
+                 }
+-                topView.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(ColorUtils.blendARGB(getAverageColor(pinchToZoomHelper.getPhotoImage()), getThemedColor(Theme.key_windowBackgroundGray), 0.1f)));
++                topView.setBackgroundColor(ColorUtils.blendARGB(getAverageColor(pinchToZoomHelper.getPhotoImage()), getThemedColor(Theme.key_windowBackgroundGray), 0.1f));
+             }
+ 
+             @Override
+@@ -8882,7 +8882,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
+                         } else {
+                             expandAnimator.setDuration(0);
+                         }
+-                        topView.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getThemedColor(Theme.key_windowBackgroundGray)));
++                        topView.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundGray));
+ 
+                         if (!doNotSetForeground) {
+                             BackupImageView imageView = avatarsViewPager.getCurrentItemView();
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity2.java b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity2.java
+index e8328792..9219c71d 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity2.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ProfileActivity2.java
+@@ -790,7 +790,7 @@ public class ProfileActivity2 extends BaseFragment implements
+     }
+ 
+     public void updateColors() {
+-        sharedMediaLayout.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getThemedColor(Theme.key_windowBackgroundWhite)));
++        sharedMediaLayout.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
+     }
+ 
+     public void updateAvatar() {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stars/BotStarsActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/Stars/BotStarsActivity.java
+index 8809de5c..af6141de 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stars/BotStarsActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stars/BotStarsActivity.java
+@@ -206,7 +206,7 @@ public class BotStarsActivity extends BaseFragment implements NotificationCenter
+             transactionsBoundary = null;
+             frameLayout = new FrameLayout(context);
+         }
+-        frameLayout.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getThemedColor(Theme.key_windowBackgroundGray)));
++        frameLayout.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundGray));
+ 
+         // Use the container only to configure the avatar; titles belong to ActionBar.
+         avatarContainer = new ChatAvatarContainer(context, null, false, getResourceProvider());
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/StatisticActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/StatisticActivity.java
+index e3704ce7..b0295170 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/StatisticActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/StatisticActivity.java
+@@ -992,7 +992,7 @@ public class StatisticActivity extends BaseFragment implements NotificationCente
+         contentLayout.addView(avatarContainer.avatarImageView, LayoutHelper.createFrame(42, 42, 53));
+         checkUi_listPaddings();
+ 
+-        fragmentView.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getThemedColor(Theme.key_windowBackgroundGray)));
++        fragmentView.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundGray));
+ 
+         diffUtilsCallback = new DiffUtilsCallback(adapter, layoutManager);
+         return fragmentView;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ThemePreviewActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ThemePreviewActivity.java
+index 6cc9ad4d..863f9cec 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ThemePreviewActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ThemePreviewActivity.java
+@@ -2285,7 +2285,7 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
+ 
+             saveButtonsContainer = new FrameLayout(context);
+             if (useDefaultThemeForButtons) {
+-                saveButtonsContainer.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getButtonsColor(Theme.key_windowBackgroundWhite)));
++                saveButtonsContainer.setBackgroundColor(getButtonsColor(Theme.key_windowBackgroundWhite));
+             } else {
+                 ThemeBind.backgroundColor(saveButtonsContainer, Theme.key_windowBackgroundWhite, getResourceProvider());
+             }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/TopicsFragment.java b/TMessagesProj/src/main/java/org/telegram/ui/TopicsFragment.java
+index bfb04ece..59040484 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/TopicsFragment.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/TopicsFragment.java
+@@ -1548,12 +1548,12 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
+         }
+         bottomOverlayProgress.setProgressColor(getThemedColor(Theme.key_chat_fieldOverlayText));
+         floatingButton.updateColors();
+-        bottomOverlayContainer.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getThemedColor(Theme.key_windowBackgroundWhite)));
++        bottomOverlayContainer.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
+         actionBar.setActionModeColor(getThemedColor(Theme.key_windowBackgroundWhite));
+         if (!inPreviewMode) {
+             actionBar.setBackgroundColor(getThemedColor(Theme.key_actionBarDefault));
+         }
+-        searchContainer.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getThemedColor(Theme.key_windowBackgroundWhite)));
++        searchContainer.setBackgroundColor(getThemedColor(Theme.key_windowBackgroundWhite));
+     }
+ 
+     private void openProfile(boolean byAvatar) {
+@@ -2217,7 +2217,7 @@ public class TopicsFragment extends BaseFragment implements NotificationCenter.N
+         actionBar.setItemsBackgroundColor(ColorUtils.blendARGB(color1, color2, searchAnimationProgress), false);
+ 
+         if (!inPreviewMode) {
+-            actionBar.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(ColorUtils.blendARGB(getThemedColor(Theme.key_actionBarDefault), getThemedColor(Theme.key_windowBackgroundWhite), searchAnimationProgress)));
++            actionBar.setBackgroundColor(ColorUtils.blendARGB(getThemedColor(Theme.key_actionBarDefault), getThemedColor(Theme.key_windowBackgroundWhite), searchAnimationProgress));
+         }
+     }
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/web/BotWebViewContainer.java b/TMessagesProj/src/main/java/org/telegram/ui/web/BotWebViewContainer.java
+index 983b2821..4863e995 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/web/BotWebViewContainer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/web/BotWebViewContainer.java
+@@ -451,7 +451,7 @@ public abstract class BotWebViewContainer extends FrameLayout implements Notific
+             CookieManager.getInstance().flush();
+             webView.opener = opener;
+         } else {
+-            webView.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getColor(Theme.key_windowBackgroundWhite)));
++            webView.setBackgroundColor(getColor(Theme.key_windowBackgroundWhite));
+         }
+         if (!MessagesController.getInstance(currentAccount).disableBotFullscreenBlur) {
+             webView.setLayerType(LAYER_TYPE_HARDWARE, null);
+@@ -1190,7 +1190,7 @@ public abstract class BotWebViewContainer extends FrameLayout implements Notific
+     public void didReceivedNotification(int id, int account, Object... args) {
+         if (id == NotificationCenter.didSetNewTheme) {
+             if (webView != null) {
+-                webView.setBackground(org.telegram.ui.Components.GlassFrameDrawable.solid(getColor(Theme.key_windowBackgroundWhite)));
++                webView.setBackgroundColor(getColor(Theme.key_windowBackgroundWhite));
+             }
+             if (!flickerViewColorOverriden) {
+                 flickerView.setColorFilter(new PorterDuffColorFilter(flickerViewColor = getColor(Theme.key_bot_loadingIcon), PorterDuff.Mode.SRC_IN));
