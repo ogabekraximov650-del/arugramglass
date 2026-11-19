@@ -1,0 +1,1363 @@
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarMenuItem.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarMenuItem.java
+index 46575250..808be921 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarMenuItem.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarMenuItem.java
+@@ -2441,6 +2441,7 @@ public class ActionBarMenuItem extends FrameLayout {
+         @Override
+         protected void dispatchDraw(@NonNull Canvas canvas) {
+             canvas.drawRoundRect(0, 0, getWidth(), getHeight(), mBackgroundRadius, mBackgroundRadius, Theme.fillingPaint(mBackgroundColor));
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, 0, 0, getWidth(), getHeight(), mBackgroundRadius);
+             super.dispatchDraw(canvas);
+             /*if (isCommunity && mDrawGradient) {
+                 if (mGradientProtectionDrawable == null) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/AvatarPreviewPagerIndicator.java b/TMessagesProj/src/main/java/org/telegram/ui/AvatarPreviewPagerIndicator.java
+index 41ed7ac9..bc336506 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/AvatarPreviewPagerIndicator.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/AvatarPreviewPagerIndicator.java
+@@ -314,6 +314,7 @@ public class AvatarPreviewPagerIndicator extends View implements ProfileGalleryV
+             }
+             canvas.scale(progressToCounter, progressToCounter, indicatorRect.centerX(), indicatorRect.centerY());
+             canvas.drawRoundRect(indicatorRect, radius, radius, backgroundPaint);
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, indicatorRect, radius);
+             canvas.drawText(getCurrentTitle(), indicatorRect.centerX(), indicatorRect.top + AndroidUtilities.dpf2(18.5f), textPaint);
+             canvas.restore();
+         }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Business/QuickRepliesActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/Business/QuickRepliesActivity.java
+index 8a7552a2..5f6e7db8 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Business/QuickRepliesActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Business/QuickRepliesActivity.java
+@@ -555,6 +555,7 @@ public class QuickRepliesActivity extends BaseFragment implements NotificationCe
+             AndroidUtilities.rectTmp.set(x, cy - h / 2f, x + getSize(), cy + h / 2f);
+             backgroundPaint.setColor(Theme.multAlpha(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText2), .15f));
+             canvas.drawRoundRect(AndroidUtilities.rectTmp, dp(4), dp(4), backgroundPaint);
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, dp(4));
+             this.text.draw(canvas, x + dp(5), (top + bottom) / 2f, Theme.getColor(Theme.key_windowBackgroundWhiteGrayText2), Utilities.clamp(2 * paint.getAlpha() / 255f, 1, 0));
+         }
+     }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/BotAskCellDrawable.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/BotAskCellDrawable.java
+index c7c7454d..44d6f16a 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/BotAskCellDrawable.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/BotAskCellDrawable.java
+@@ -121,8 +121,10 @@ public class BotAskCellDrawable extends Drawable {
+     public void draw(Canvas canvas) {
+         Paint backgroundPaint = Theme.getThemePaint(Theme.key_paint_chatActionBackground, resourcesProvider);
+         canvas.drawRoundRect(tmpRect, dp(16), dp(16), backgroundPaint);
++        org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, tmpRect, dp(16));
+         if (hasGradientService()) {
+             canvas.drawRoundRect(tmpRect, dp(16), dp(16), Theme.getThemePaint(Theme.key_paint_chatActionBackgroundDarken, resourcesProvider));
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, tmpRect, dp(16));
+         }
+ 
+         canvas.save();
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChannelRecommendationsCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChannelRecommendationsCell.java
+index 811d625e..ba29093f 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChannelRecommendationsCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChannelRecommendationsCell.java
+@@ -696,9 +696,12 @@ public class ChannelRecommendationsCell {
+                     subscribersBackgroundPaintMatrix.postTranslate(width / 2f - avatarSize() / 2f, AndroidUtilities.rectTmp.bottom - avatarSize());
+                     subscribersBackgroundPaintShader.setLocalMatrix(subscribersBackgroundPaintMatrix);
+                     canvas.drawRoundRect(AndroidUtilities.rectTmp, dp(8), dp(8), subscribersBackgroundPaint);
++                    org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, dp(8));
+                     canvas.drawRoundRect(AndroidUtilities.rectTmp, dp(8), dp(8), subscribersBackgroundDimPaint);
++                    org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, dp(8));
+                 } else {
+                     canvas.drawRoundRect(AndroidUtilities.rectTmp, dp(8), dp(8), subscribersBackgroundPaint);
++                    org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, dp(8));
+                 }
+ 
+                 AndroidUtilities.rectTmp.inset(-dp(1) / 2f, -dp(1) / 2f);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatActionCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatActionCell.java
+index 27bdb94b..5b398b64 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatActionCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatActionCell.java
+@@ -3199,6 +3199,7 @@ public class ChatActionCell extends BaseCell implements DownloadController.FileD
+                 giftReleasedBackgroundPaint.setColor(Theme.isCurrentThemeDark() ? 0x10FFFFFF : 0x10000000);
+                 AndroidUtilities.rectTmp.set(_x, _cy - dp(8), _x + _w, _cy + dp(8));
+                 canvas.drawRoundRect(AndroidUtilities.rectTmp, dp(8), dp(8), giftReleasedBackgroundPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, dp(8));
+                 giftPremiumReleasedText
+                     .draw(canvas, _x + dp(6), _cy, 0xCCFFFFFF, 1.0f);
+                 y += dp(16 + 8);
+@@ -3360,8 +3361,10 @@ public class ChatActionCell extends BaseCell implements DownloadController.FileD
+             if (giftPremiumButtonLayout != null) {
+                 Paint backgroundPaint = getThemedPaint(Theme.key_paint_chatActionBackgroundSelected);
+                 canvas.drawRoundRect(giftButtonRect, dp(15), dp(15), backgroundPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, giftButtonRect, dp(15));
+                 if (hasGradientService()) {
+                     canvas.drawRoundRect(giftButtonRect, dp(15), dp(15), getThemedPaint(Theme.key_paint_chatActionBackgroundDarken));
++                    org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, giftButtonRect, dp(15));
+                 }
+                 if (dimAmount > 0) {
+                     canvas.drawRoundRect(giftButtonRect, dp(15), dp(15), dimPaint);
+@@ -3742,8 +3745,10 @@ public class ChatActionCell extends BaseCell implements DownloadController.FileD
+             canvas.save();
+             walletActionLayout.applyCardTransform(canvas, x, y);
+             canvas.drawRoundRect(walletActionRect, dp(20), dp(20), backgroundPaint);
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, walletActionRect, dp(20));
+             if (hasGradientService() && darkenBackgroundPaint.getAlpha() > 0) {
+                 canvas.drawRoundRect(walletActionRect, dp(20), dp(20), darkenBackgroundPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, walletActionRect, dp(20));
+             }
+             if (dimAmount > 0) {
+                 int wasAlpha = dimPaint.getAlpha();
+@@ -3767,9 +3772,11 @@ public class ChatActionCell extends BaseCell implements DownloadController.FileD
+             }
+             backgroundRect.set(AndroidUtilities.rectTmp);
+             canvas.drawRoundRect(backgroundRect, dp(16), dp(16), backgroundPaint);
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, backgroundRect, dp(16));
+ 
+             if (hasGradientService()) {
+                 canvas.drawRoundRect(backgroundRect, dp(16), dp(16), darkenBackgroundPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, backgroundRect, dp(16));
+             }
+         } else if (birthdayLayout != null) {
+             final float w = birthdayLayout.width();
+@@ -3780,9 +3787,11 @@ public class ChatActionCell extends BaseCell implements DownloadController.FileD
+             }
+             backgroundRect.set(x, dp(4), x + w, dp(4) + h);
+             canvas.drawRoundRect(backgroundRect, dp(16), dp(16), backgroundPaint);
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, backgroundRect, dp(16));
+ 
+             if (hasGradientService()) {
+                 canvas.drawRoundRect(backgroundRect, dp(16), dp(16), darkenBackgroundPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, backgroundRect, dp(16));
+             }
+         } else if (isButtonLayout(messageObject)) {
+             float x = (getWidth() - giftRectSize) / 2f;
+@@ -3819,9 +3828,11 @@ public class ChatActionCell extends BaseCell implements DownloadController.FileD
+ 
+             if (!backgroundDrawn) {
+                 canvas.drawRoundRect(backgroundRect, dp(20), dp(20), backgroundPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, backgroundRect, dp(20));
+ 
+                 if (hasGradientService()) {
+                     canvas.drawRoundRect(backgroundRect, dp(20), dp(20), darkenBackgroundPaint);
++                    org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, backgroundRect, dp(20));
+                 }
+             }
+         }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatLoadingCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatLoadingCell.java
+index 0e74fce1..60fa4327 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatLoadingCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatLoadingCell.java
+@@ -44,8 +44,10 @@ public class ChatLoadingCell extends FrameLayout implements Theme.Colorable {
+                 rect.set(0, 0, getWidth(), getHeight());
+                 applyServiceShaderMatrix();
+                 canvas.drawRoundRect(rect, dp(18), dp(18), getThemedPaint(Theme.key_paint_chatActionBackground));
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, dp(18));
+                 if (hasGradientService()) {
+                     canvas.drawRoundRect(rect, dp(18), dp(18), getThemedPaint(Theme.key_paint_chatActionBackgroundDarken));
++                    org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, dp(18));
+                 }
+ 
+                 super.dispatchDraw(canvas);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageBotButtons.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageBotButtons.java
+index 81e27f2f..ae0c79c6 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageBotButtons.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageBotButtons.java
+@@ -389,8 +389,10 @@ class ChatMessageBotButtons {
+                 for (int n = 0; n < separatorsCount + 1; n++) {
+                     cell.rect.set(x1 + partWidth * n, y, x1 + partWidth * n + blockWidth, y + button.height);
+                     canvas.drawRoundRect(cell.rect, br, br, cell.getThemedPaint(Theme.key_paint_chatActionBackground));
++                    org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, cell.rect, br);
+                     if (cell.hasGradientService()) {
+                         canvas.drawRoundRect(cell.rect, br, br, Theme.chat_actionBackgroundGradientDarkenPaint);
++                        org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, cell.rect, br);
+                     }
+                 }
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+index 5dc090fb..3449158a 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageCell.java
+@@ -18085,18 +18085,22 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+             int oldAlpha = getThemedPaint(Theme.key_paint_chatActionBackground).getAlpha();
+             getThemedPaint(Theme.key_paint_chatActionBackground).setAlpha((int) (alpha * oldAlpha));
+             canvas.drawRoundRect(rect, radius, radius, getThemedPaint(Theme.key_paint_chatActionBackground));
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, radius);
+             getThemedPaint(Theme.key_paint_chatActionBackground).setAlpha(oldAlpha);
+         } else {
+             canvas.drawRoundRect(rect, radius, radius, getThemedPaint(sideButtonPressed ? Theme.key_paint_chatActionBackgroundSelected : Theme.key_paint_chatActionBackground));
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, radius);
+         }
+         if (hasGradientService()) {
+             if (alpha != 1f) {
+                 int oldAlpha = Theme.chat_actionBackgroundGradientDarkenPaint.getAlpha();
+                 Theme.chat_actionBackgroundGradientDarkenPaint.setAlpha((int) (alpha * oldAlpha));
+                 canvas.drawRoundRect(rect, radius, radius, Theme.chat_actionBackgroundGradientDarkenPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, radius);
+                 Theme.chat_actionBackgroundGradientDarkenPaint.setAlpha(oldAlpha);
+             } else {
+                 canvas.drawRoundRect(rect, radius, radius, Theme.chat_actionBackgroundGradientDarkenPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, radius);
+             }
+         }
+     }
+@@ -18141,18 +18145,22 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+             int oldAlpha = getThemedPaint(Theme.key_paint_chatActionBackground).getAlpha();
+             getThemedPaint(Theme.key_paint_chatActionBackground).setAlpha((int) (alpha * oldAlpha));
+             canvas.drawRoundRect(rect, dp(16), dp(16), getThemedPaint(Theme.key_paint_chatActionBackground));
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, dp(16));
+             getThemedPaint(Theme.key_paint_chatActionBackground).setAlpha(oldAlpha);
+         } else {
+             canvas.drawRoundRect(rect, dp(16), dp(16), getThemedPaint(sideButtonPressed ? Theme.key_paint_chatActionBackgroundSelected : Theme.key_paint_chatActionBackground));
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, dp(16));
+         }
+         if (hasGradientService()) {
+             if (alpha != 1f) {
+                 int oldAlpha = Theme.chat_actionBackgroundGradientDarkenPaint.getAlpha();
+                 Theme.chat_actionBackgroundGradientDarkenPaint.setAlpha((int) (alpha * oldAlpha));
+                 canvas.drawRoundRect(rect, dp(16), dp(16), Theme.chat_actionBackgroundGradientDarkenPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, dp(16));
+                 Theme.chat_actionBackgroundGradientDarkenPaint.setAlpha(oldAlpha);
+             } else {
+                 canvas.drawRoundRect(rect, dp(16), dp(16), Theme.chat_actionBackgroundGradientDarkenPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, dp(16));
+             }
+         }
+ 
+@@ -18954,9 +18962,11 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                 }
+             } else {
+                 canvas.drawRoundRect(rect, dp(16), dp(16), getThemedPaint(sideButtonPressed ? Theme.key_paint_chatActionBackgroundSelected : Theme.key_paint_chatActionBackground));
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, dp(16));
+             }
+             if (hasGradientService()) {
+                 canvas.drawRoundRect(rect, dp(16), dp(16), Theme.chat_actionBackgroundGradientDarkenPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, dp(16));
+             }
+ 
+             if (drawSideButton == 2) {
+@@ -19009,8 +19019,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+ 
+             applyServiceShaderMatrix();
+             canvas.drawRoundRect(rect, dp(16), dp(16), getThemedPaint(sideButtonPressed ? Theme.key_paint_chatActionBackgroundSelected : Theme.key_paint_chatActionBackground));
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, dp(16));
+             if (hasGradientService()) {
+                 canvas.drawRoundRect(rect, dp(16), dp(16), Theme.chat_actionBackgroundGradientDarkenPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, dp(16));
+             }
+ 
+             if (summarizeIcon == null) {
+@@ -19275,10 +19287,12 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                 oldAlpha = getThemedPaint(Theme.key_paint_chatActionBackground).getAlpha();
+                 getThemedPaint(Theme.key_paint_chatActionBackground).setAlpha((int) (alphaProgress * oldAlpha * replyForwardAlpha));
+                 canvas.drawRoundRect(rect, dp(6), dp(6), getThemedPaint(Theme.key_paint_chatActionBackground));
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, dp(6));
+                 if (hasGradientService()) {
+                     int oldAlpha2 = Theme.chat_actionBackgroundGradientDarkenPaint.getAlpha();
+                     Theme.chat_actionBackgroundGradientDarkenPaint.setAlpha((int) (oldAlpha2 * timeAlpha * replyForwardAlpha));
+                     canvas.drawRoundRect(rect, dp(6), dp(6), Theme.chat_actionBackgroundGradientDarkenPaint);
++                    org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, dp(6));
+                     Theme.chat_actionBackgroundGradientDarkenPaint.setAlpha(oldAlpha2);
+                 }
+ 
+@@ -19619,11 +19633,13 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                 int oldAlpha = getThemedPaint(Theme.key_paint_chatActionBackground).getAlpha();
+                 getThemedPaint(Theme.key_paint_chatActionBackground).setAlpha((int) (oldAlpha * timeAlpha * replyForwardAlpha));
+                 canvas.drawRoundRect(AndroidUtilities.rectTmp, dp(8.66f), dp(8.66f), getThemedPaint(Theme.key_paint_chatActionBackground));
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, dp(8.66f));
+                 getThemedPaint(Theme.key_paint_chatActionBackground).setAlpha(oldAlpha);
+                 if (hasGradientService()) {
+                     oldAlpha = Theme.chat_actionBackgroundGradientDarkenPaint.getAlpha();
+                     Theme.chat_actionBackgroundGradientDarkenPaint.setAlpha((int) (oldAlpha * timeAlpha * replyForwardAlpha));
+                     canvas.drawRoundRect(AndroidUtilities.rectTmp, dp(8.66f), dp(8.66f), Theme.chat_actionBackgroundGradientDarkenPaint);
++                    org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, dp(8.66f));
+                     Theme.chat_actionBackgroundGradientDarkenPaint.setAlpha(oldAlpha);
+                 }
+             } else {
+@@ -19710,12 +19726,14 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                         getThemedPaint(Theme.key_paint_chatActionBackground).setAlpha((int) (oldAlpha1 * animatingAlpha * replyForwardAlpha));
+                     }
+                     canvas.drawRoundRect(rect, dp(6), dp(6), getThemedPaint(Theme.key_paint_chatActionBackground));
++                    org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, dp(6));
+                     if (hasGradientService()) {
+                         if (animatingAlpha != 1f || replyForwardAlpha != 1f) {
+                             oldAlpha2 = Theme.chat_actionBackgroundGradientDarkenPaint.getAlpha();
+                             Theme.chat_actionBackgroundGradientDarkenPaint.setAlpha((int) (oldAlpha2 * animatingAlpha * replyForwardAlpha));
+                         }
+                         canvas.drawRoundRect(rect, dp(6), dp(6), Theme.chat_actionBackgroundGradientDarkenPaint);
++                        org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, dp(6));
+                     }
+                 } else {
+                     applyServiceShaderMatrix(getMeasuredWidth(), backgroundHeight, getX() + forwardNameXLocal, viewTop + forwardNameY);
+@@ -19941,11 +19959,13 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                     oldAlpha = getThemedPaint(Theme.key_paint_chatActionBackground).getAlpha();
+                     getThemedPaint(Theme.key_paint_chatActionBackground).setAlpha((int) (oldAlpha * timeAlpha * replyForwardAlpha));
+                     canvas.drawRoundRect(rect, dp(4), dp(4), getThemedPaint(Theme.key_paint_chatActionBackground));
++                    org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, dp(4));
+                     getThemedPaint(Theme.key_paint_chatActionBackground).setAlpha(oldAlpha);
+                     if (hasGradientService()) {
+                         oldAlpha = Theme.chat_actionBackgroundGradientDarkenPaint.getAlpha();
+                         Theme.chat_actionBackgroundGradientDarkenPaint.setAlpha((int) (oldAlpha * timeAlpha * replyForwardAlpha));
+                         canvas.drawRoundRect(rect, dp(4), dp(4), Theme.chat_actionBackgroundGradientDarkenPaint);
++                        org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, dp(4));
+                         Theme.chat_actionBackgroundGradientDarkenPaint.setAlpha(oldAlpha);
+                     }
+                     canvas.restore();
+@@ -21507,6 +21527,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                         int oldAlpha2 = Theme.chat_actionBackgroundGradientDarkenPaint.getAlpha();
+                         Theme.chat_actionBackgroundGradientDarkenPaint.setAlpha((int) (oldAlpha2 * timeAlpha * alpha));
+                         canvas.drawRoundRect(rect, r, r, Theme.chat_actionBackgroundGradientDarkenPaint);
++                        org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, r);
+                         Theme.chat_actionBackgroundGradientDarkenPaint.setAlpha(oldAlpha2);
+                     }
+                 }
+@@ -21752,6 +21773,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+             int wasAlpha = Theme.chat_timeBackgroundPaint.getAlpha();
+             Theme.chat_timeBackgroundPaint.setAlpha((int) (wasAlpha * 0.7f));
+             canvas.drawRoundRect(AndroidUtilities.rectTmp, dp(32), dp(32), Theme.chat_timeBackgroundPaint);
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, dp(32));
+             Theme.chat_timeBackgroundPaint.setAlpha(wasAlpha);
+             canvas.translate(unlockX + dp(4), unlockY);
+             Theme.chat_msgUnlockDrawable.setBounds(0, 0, Theme.chat_msgUnlockDrawable.getIntrinsicWidth(), Theme.chat_msgUnlockDrawable.getIntrinsicHeight());
+@@ -21773,6 +21795,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                 int y = (int) (photoImage.getImageY() + dp(6));
+                 rect.set(x - dp(4), y - dp(1.5f), x + durationWidth + dp(4) + dp(bigRadius ? 2 : 0), y + videoInfoLayout.getHeight() + dp(1.5f));
+                 canvas.drawRoundRect(rect, rad, rad, getThemedPaint(Theme.key_paint_chatTimeBackground));
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, rad);
+ 
+                 canvas.save();
+                 canvas.translate(x + (bigRadius ? 2 : 0), y);
+@@ -22479,9 +22502,11 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                                 photoImage.setAlpha(wasAlpha);
+                                 canvas.restore();
+                                 canvas.drawRoundRect(rect, r, r, getThemedPaint(Theme.key_paint_chatTimeBackground));
++                                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, r);
+                             } else if (drawDocTitleLayout || (drawLoadingProgress && loadingProgressLayout != null) || (!drawLoadingProgress && infoLayout != null)) {
+                                 canvas.scale(loadingProgressAlpha, loadingProgressAlpha, x1, y1);
+                                 canvas.drawRoundRect(rect, r, r, getThemedPaint(Theme.key_paint_chatTimeBackground));
++                                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, r);
+                             } else {
+                                 canvas.scale(loadingProgressAlpha, loadingProgressAlpha, x1, y1);
+                             }
+@@ -22738,8 +22763,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+                     // compact: the action pill at full strength, half of it would vanish on the plain background
+                     bgPaint.setAlpha((int) (oldAlpha * timeAlpha * (1f - getVideoTranscriptionProgress())));
+                     canvas.drawRoundRect(rect, rect.height() / 2f, rect.height() / 2f, bgPaint);
++                    org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, rect.height() / 2f);
+                 } else {
+                     canvas.drawRoundRect(rect, dp(6), dp(6), bgPaint);
++                    org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, dp(6));
+                 }
+                 if (hasGradientService() && !isCompactLayout()) {
+                     Paint darkenPaint = getThemedPaint(Theme.key_paint_chatActionBackgroundDarken);
+@@ -22868,6 +22895,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
+             int oldAlpha = getThemedPaint(Theme.key_paint_chatTimeBackground).getAlpha();
+             getThemedPaint(Theme.key_paint_chatTimeBackground).setAlpha((int) (oldAlpha * controlsAlpha * (1f - mediaSpoilerRevealProgress) * .35f));
+             canvas.drawRoundRect(AndroidUtilities.rectTmp, r, r, getThemedPaint(Theme.key_paint_chatTimeBackground));
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, r);
+             getThemedPaint(Theme.key_paint_chatTimeBackground).setAlpha(oldAlpha);
+ 
+             canvas.save();
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageFactCheck.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageFactCheck.java
+index 95d9ba83..fe831d9b 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageFactCheck.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageFactCheck.java
+@@ -284,6 +284,7 @@ class ChatMessageFactCheck {
+                 canvas.save();
+                 canvas.scale(s2, s2, AndroidUtilities.rectTmp.centerX(), AndroidUtilities.rectTmp.centerY());
+                 canvas.drawRoundRect(AndroidUtilities.rectTmp, dp(17), dp(17), messageLine.backgroundPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, dp(17));
+                 what.draw(canvas, bx + dp(5), dp(12), textColor, alpha);
+                 canvas.restore();
+             }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageLinkPreview.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageLinkPreview.java
+index 837ed85d..43e7cc69 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageLinkPreview.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ChatMessageLinkPreview.java
+@@ -607,6 +607,7 @@ class ChatMessageLinkPreview {
+             timeBackgroundPaint.setAlpha((int) (oldAlpha * cell.controlsAlpha));
+             Theme.chat_durationPaint.setAlpha((int) (255 * cell.controlsAlpha));
+             canvas.drawRoundRect(cell.rect, dp(4), dp(4), timeBackgroundPaint);
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, cell.rect, dp(4));
+             timeBackgroundPaint.setAlpha(oldAlpha);
+             canvas.save();
+             canvas.translate(x, y);
+@@ -624,6 +625,7 @@ class ChatMessageLinkPreview {
+                     int height = dp(cell.documentAttachType == cell.DOCUMENT_ATTACH_TYPE_WALLPAPER ? 14.5f : 16.5f);
+                     cell.rect.set(x - dp(4), y - dp(1.5f), x + cell.durationWidth + dp(4), y + height);
+                     canvas.drawRoundRect(cell.rect, dp(4), dp(4), timeBackgroundPaint);
++                    org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, cell.rect, dp(4));
+                 } else {
+                     x = linkX;
+                     y = linkPreviewY;
+@@ -633,6 +635,7 @@ class ChatMessageLinkPreview {
+                 y = (int) (cell.photoImage.getImageY() + cell.photoImage.getImageHeight() - dp(19));
+                 cell.rect.set(x - dp(4), y - dp(1.5f), x + cell.durationWidth + dp(4), y + dp(14.5f));
+                 canvas.drawRoundRect(cell.rect, dp(4), dp(4), cell.getThemedPaint(Theme.key_paint_chatTimeBackground));
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, cell.rect, dp(4));
+             }
+ 
+             canvas.save();
+@@ -772,6 +775,7 @@ class ChatMessageLinkPreview {
+                     cell.invalidate();
+                 }
+                 canvas.drawRoundRect(cell.instantButtonRect, dp(6), dp(6), Theme.chat_instantViewButtonPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, cell.instantButtonRect, dp(6));
+                 if (cell.drawInstantViewType == 0) {
+                     cell.setDrawableBounds(instantDrawable, cell.instantTextLeftX + cell.instantTextX + linkX - dp(15), instantY + dp(11.5f), dp(9), dp(13));
+                     instantDrawable.setAlpha((int) (0xFF * alpha));
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+index 698bf4d5..79bd1329 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/DialogCell.java
+@@ -4675,6 +4675,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
+                 canvas.scale(scale, scale, openButtonRect.centerX(), openButtonRect.centerY());
+                 openButtonBackgroundPaint.setColor(Theme.getColor(Theme.key_featuredStickers_addButton, resourcesProvider));
+                 canvas.drawRoundRect(openButtonRect, openButtonRect.height() / 2.0f, openButtonRect.height() / 2.0f, openButtonBackgroundPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, openButtonRect, openButtonRect.height() / 2.0f);
+                 if (openButtonText != null) {
+                     openButtonText.draw(canvas, openButtonRect.left + dp(13), openButtonRect.centerY(), Theme.getColor(Theme.key_featuredStickers_buttonText, resourcesProvider), 1.0f);
+                 }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/PhotoAttachPhotoCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/PhotoAttachPhotoCell.java
+index 6a6c053f..05b60444 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/PhotoAttachPhotoCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/PhotoAttachPhotoCell.java
+@@ -255,6 +255,7 @@ public class PhotoAttachPhotoCell extends FrameLayout {
+             protected void onDraw(Canvas canvas) {
+                 rect.set(0, 0, getMeasuredWidth(), getMeasuredHeight());
+                 canvas.drawRoundRect(rect, dp(4), dp(4), Theme.chat_timeBackgroundPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, dp(4));
+             }
+         };
+         videoInfoContainer.setWillNotDraw(false);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ProfileSearchCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ProfileSearchCell.java
+index 40f0f072..88ad4e8b 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ProfileSearchCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ProfileSearchCell.java
+@@ -1019,6 +1019,7 @@ public class ProfileSearchCell extends BaseCell implements NotificationCenter.No
+             canvas.translate(l, nameTop);
+             AndroidUtilities.rectTmp.set(0, 0, w, h);
+             canvas.drawRoundRect(AndroidUtilities.rectTmp, h / 2f, h / 2f, adBackgroundPaint);
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, h / 2f);
+             adText.draw(canvas, dp(6.33f), h / 2.f, color, 1.0f);
+             canvas.restore();
+         }
+@@ -1120,6 +1121,7 @@ public class ProfileSearchCell extends BaseCell implements NotificationCenter.No
+             final float s = openButtonBounce.getScale(.06f);
+             canvas.scale(s, s, openButtonRect.centerX(), openButtonRect.centerY());
+             canvas.drawRoundRect(openButtonRect, openButtonRect.height() / 2.0f, openButtonRect.height() / 2.0f, openButtonBackgroundPaint);
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, openButtonRect, openButtonRect.height() / 2.0f);
+             openButtonText.draw(canvas, x + dp(14), getHeight() / 2.0f, 0xFFFFFFFF, 1.0f);
+             canvas.restore();
+         }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ShareDialogCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ShareDialogCell.java
+index 8a5e3837..be348823 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/ShareDialogCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/ShareDialogCell.java
+@@ -375,9 +375,11 @@ public class ShareDialogCell extends FrameLayout implements NotificationCenter.N
+                     AndroidUtilities.rectTmp.inset(-dp(1.33f), dp(-1.33f));
+                     priceBackgroundPaint.setColor(getThemedColor(Theme.key_dialogBackground));
+                     canvas.drawRoundRect(AndroidUtilities.rectTmp, AndroidUtilities.rectTmp.height() / 2.0f, AndroidUtilities.rectTmp.height() / 2.0f, priceBackgroundPaint);
++                    org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, AndroidUtilities.rectTmp.height() / 2.0f);
+                     AndroidUtilities.rectTmp.inset(dp(1.33f), dp(1.33f));
+                     priceBackgroundPaint.setColor(getThemedColor(Theme.key_dialogRoundCheckBox));
+                     canvas.drawRoundRect(AndroidUtilities.rectTmp, AndroidUtilities.rectTmp.height() / 2.0f, AndroidUtilities.rectTmp.height() / 2.0f, priceBackgroundPaint);
++                    org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, AndroidUtilities.rectTmp.height() / 2.0f);
+ 
+                     if (priceText != null) {
+                         priceText.draw(canvas, cx - w / 2.0f + dp(5), cy, Color.WHITE, 1.0f);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/SharedPhotoVideoCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/SharedPhotoVideoCell.java
+index 0526ef17..6acb3687 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/SharedPhotoVideoCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/SharedPhotoVideoCell.java
+@@ -107,6 +107,7 @@ public class SharedPhotoVideoCell extends FrameLayout implements Theme.Colorable
+                 protected void onDraw(Canvas canvas) {
+                     rect.set(0, 0, getMeasuredWidth(), getMeasuredHeight());
+                     canvas.drawRoundRect(rect, AndroidUtilities.dp(4), AndroidUtilities.dp(4), Theme.chat_timeBackgroundPaint);
++                    org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, AndroidUtilities.dp(4));
+                 }
+             };
+             videoInfoContainer.setWillNotDraw(false);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Cells/SharedPhotoVideoCell2.java b/TMessagesProj/src/main/java/org/telegram/ui/Cells/SharedPhotoVideoCell2.java
+index 3fce55be..8b561a01 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Cells/SharedPhotoVideoCell2.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Cells/SharedPhotoVideoCell2.java
+@@ -749,6 +749,7 @@ public class SharedPhotoVideoCell2 extends FrameLayout {
+                     int oldAlpha = timeBackgroundPaint.getAlpha();
+                     timeBackgroundPaint.setAlpha((int) (oldAlpha * (1f - spoilerRevealProgress) * .35f));
+                     canvas.drawRoundRect(AndroidUtilities.rectTmp, r, r, timeBackgroundPaint);
++                    org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, r);
+                     timeBackgroundPaint.setAlpha(oldAlpha);
+ 
+                     canvas.save();
+@@ -895,6 +896,7 @@ public class SharedPhotoVideoCell2 extends FrameLayout {
+         int oldAlpha = Theme.chat_timeBackgroundPaint.getAlpha();
+         Theme.chat_timeBackgroundPaint.setAlpha((int) (oldAlpha * alpha));
+         canvas.drawRoundRect(AndroidUtilities.rectTmp, dp(4), dp(4), Theme.chat_timeBackgroundPaint);
++        org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, dp(4));
+         Theme.chat_timeBackgroundPaint.setAlpha(oldAlpha);
+         if (drawVideoIcon) {
+             canvas.save();
+@@ -997,6 +999,7 @@ public class SharedPhotoVideoCell2 extends FrameLayout {
+         int oldAlpha = Theme.chat_timeBackgroundPaint.getAlpha();
+         Theme.chat_timeBackgroundPaint.setAlpha((int) (oldAlpha * alpha));
+         canvas.drawRoundRect(AndroidUtilities.rectTmp, dp(4), dp(4), Theme.chat_timeBackgroundPaint);
++        org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, dp(4));
+         Theme.chat_timeBackgroundPaint.setAlpha(oldAlpha);
+ 
+         canvas.save();
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index d74f8e99..4e4c07bc 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -4937,6 +4937,7 @@ public class ChatActivity extends BaseFragment implements
+ 
+                         outlineActionBackgroundPaint.setStrokeWidth(width);
+                         canvas.drawRoundRect(AndroidUtilities.rectTmp, AndroidUtilities.dp(16) * outScale, AndroidUtilities.dp(16) * outScale, outlineActionBackgroundPaint);
++                        org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, AndroidUtilities.dp(16) * outScale);
+                         outlineActionBackgroundPaint.setStrokeWidth(wasWidth);
+ 
+                         outlineActionBackgroundPaint.setAlpha(wasAlpha);
+@@ -4950,6 +4951,7 @@ public class ChatActivity extends BaseFragment implements
+ 
+                             outlineActionBackgroundDarkenPaint.setStrokeWidth(width);
+                             canvas.drawRoundRect(AndroidUtilities.rectTmp, AndroidUtilities.dp(16) * outScale, AndroidUtilities.dp(16) * outScale, outlineActionBackgroundDarkenPaint);
++                            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, AndroidUtilities.dp(16) * outScale);
+                             outlineActionBackgroundDarkenPaint.setStrokeWidth(wasWidth);
+                         }
+                     }
+@@ -7046,8 +7048,10 @@ public class ChatActivity extends BaseFragment implements
+                 rect.set(0, 0, getWidth(), getHeight());
+                 applyServiceShaderMatrix();
+                 canvas.drawRoundRect(rect, dp(18), dp(18), getThemedPaint(Theme.key_paint_chatActionBackground));
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, dp(18));
+                 if (themeDelegate != null ? themeDelegate.hasGradientService() : Theme.hasGradientService()) {
+                     canvas.drawRoundRect(rect, dp(18), dp(18), getThemedPaint(Theme.key_paint_chatActionBackgroundDarken));
++                    org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, dp(18));
+                 }
+                 super.dispatchDraw(canvas);
+             }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ButtonSpan.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ButtonSpan.java
+index a154f35b..30e65f0b 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ButtonSpan.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ButtonSpan.java
+@@ -83,6 +83,7 @@ public class ButtonSpan extends ReplacementSpan {
+         final int color = forcedColor != null ? forcedColor : Theme.getColor(Theme.key_featuredStickers_addButton, resourcesProvider);
+         backgroundPaint.setColor(Theme.multAlpha(color, .15f));
+         canvas.drawRoundRect(AndroidUtilities.rectTmp, h / 2, h / 2, backgroundPaint);
++        org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, h / 2);
+         this.text.draw(canvas, x + dp(7), (top + bottom) / 2f, color, 1f);
+         canvas.restore();
+     }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+index 320d51b1..850fc2db 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+@@ -1585,6 +1585,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+                 );
+                 lockShadowDrawable.draw(canvas);
+                 canvas.drawRoundRect(rectF, dpf2(18), dpf2(18), lockBackgroundPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rectF, dpf2(18));
+             }
+ 
+ 
+@@ -1645,6 +1646,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+             if (transformToPauseProgress > 0) {
+                 if (periodBackgroundDrawable == null) {
+                     canvas.drawRoundRect(rectF, dpf2(3), dpf2(3), lockBackgroundPaint);
++                    org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rectF, dpf2(3));
+                 }
+ 
+                 path2.rewind();
+@@ -1715,6 +1717,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+                     );
+                     lockShadowDrawable.draw(canvas);
+                     canvas.drawRoundRect(rectF, dpf2(18), dpf2(18), lockBackgroundPaint);
++                    org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rectF, dpf2(18));
+                 }
+                 periodDrawable.setBounds((int) rectF.left, (int) rectF.top, (int) rectF.right, (int) rectF.bottom);
+                 periodDrawable.draw(canvas);
+@@ -15279,6 +15282,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+                     AndroidUtilities.rectTmp.inset(-dp(4), -dp(4));
+                     final float r = Math.min(w, h) / 2f + dp(4);
+                     canvas.drawRoundRect(AndroidUtilities.rectTmp, r, r, scrimViewBackgroundPaint);
++                    org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, r);
+                 }
+ 
+                 final float countScale = count.isNotEmpty() * (1.0f - priceProgress);
+@@ -15400,7 +15404,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+             checkBackgroundRect();
+             if (isNewDesignSendButton) {
+                 canvas.drawRoundRect(backgroundRect, dp(RADIUS), dp(RADIUS), backgroundPaint);
+-                GlassFrameDrawable.drawGlassRect(null, canvas, backgroundRect, dp(RADIUS));
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, backgroundRect, dp(RADIUS));
+             }
+ 
+             final boolean inactive = isInactive();
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatGreetingsView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatGreetingsView.java
+index 480551f8..307314b8 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatGreetingsView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatGreetingsView.java
+@@ -481,6 +481,7 @@ public class ChatGreetingsView extends LinearLayout implements Theme.Colorable {
+             }
+             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                 canvas.drawRoundRect(0, 0, getWidth(), getHeight(), dp(16), dp(16), Theme.getThemePaint(Theme.key_paint_chatActionBackground, resourcesProvider));
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, 0, 0, getWidth(), getHeight(), dp(16));
+             }
+         }
+         if (!wasDraw) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/GlassFrameDrawable.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/GlassFrameDrawable.java
+index 0eeeeb7b..75fc49ec 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/GlassFrameDrawable.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/GlassFrameDrawable.java
+@@ -43,7 +43,7 @@ public class GlassFrameDrawable extends DrawableWrapper {
+ 
+     @Override
+     public void draw(Canvas canvas) {
+-        if (capturing) {
++        if (capturing || !isMain()) {
+             super.draw(canvas);
+             return;
+         }
+@@ -98,6 +98,11 @@ public class GlassFrameDrawable extends DrawableWrapper {
+         return capturing;
+     }
+ 
++    /** UZ: qirra keshi faqat UI oqimida. EN: the rim cache is UI-thread only. RU: kesh obodka tolko v UI-potoke. */
++    public static boolean isMain() {
++        return android.os.Looper.myLooper() == android.os.Looper.getMainLooper();
++    }
++
+     // --- the whole screen behind a dialog / sheet / popup (the activity window)
+     private static Bitmap backdrop;
+     private static long backdropTime;
+@@ -252,7 +257,7 @@ public class GlassFrameDrawable extends DrawableWrapper {
+ 
+     /** UZ: Panel (ActionBar) ostki chizig'i. EN: bottom edge line of a bar. RU: nizhnyaya liniya paneli. */
+     public static void drawBarEdge(Canvas canvas, int width, int height) {
+-        if (capturing || width <= 0 || height <= 0) {
++        if (!isMain() || capturing || width <= 0 || height <= 0) {
+             return;
+         }
+         try {
+@@ -268,7 +273,7 @@ public class GlassFrameDrawable extends DrawableWrapper {
+ 
+     /** UZ: Butun ekran ramkasi (yuqori yaltiroq + qirra). EN: whole-screen frame (top sheen + rim). RU: ramka vsego ekrana. */
+     public static void drawScreenFrame(Canvas canvas, int width, int height) {
+-        if (capturing || width <= 0 || height <= 0) {
++        if (!isMain() || capturing || width <= 0 || height <= 0) {
+             return;
+         }
+         try {
+@@ -282,7 +287,7 @@ public class GlassFrameDrawable extends DrawableWrapper {
+ 
+     /** UZ: Xabar pufakchasi qirrasi. EN: chat bubble rim. RU: obodok puzyrya soobshcheniya. */
+     public static void drawBubbleRim(Canvas canvas, Rect bounds) {
+-        if (capturing || bounds == null || bounds.height() < dp(24) || bounds.width() < dp(24)) {
++        if (!isMain() || capturing || bounds == null || bounds.height() < dp(24) || bounds.width() < dp(24)) {
+             return;
+         }
+         try {
+@@ -294,7 +299,7 @@ public class GlassFrameDrawable extends DrawableWrapper {
+ 
+     /** UZ: Ixtiyoriy yumaloq yuza uchun yaltiroq + qirra (o'zi fon chizadigan oynalar). EN: sheen + rim for any rounded surface. RU: blik + obodok. */
+     public static void drawGlassRect(View view, Canvas canvas, RectF r, float radiusPx) {
+-        if (capturing || r == null || r.width() < dp(8) || r.height() < dp(8)) {
++        if (!isMain() || capturing || r == null || r.width() < dp(8) || r.height() < dp(8)) {
+             return;
+         }
+         try {
+@@ -310,7 +315,7 @@ public class GlassFrameDrawable extends DrawableWrapper {
+ 
+     /** UZ: o'zi fon chizadigan yuza OLDIDAN: xira fon. EN: before a self-drawn surface: blurred backdrop. RU: pered poverkhnostyu: razmytyj fon. */
+     public static void beforeSurface(View view, Canvas canvas, Rect bounds, float radiusPx) {
+-        if (capturing || bounds == null || bounds.width() < dp(8) || bounds.height() < dp(8)) {
++        if (!isMain() || capturing || bounds == null || bounds.width() < dp(8) || bounds.height() < dp(8)) {
+             return;
+         }
+         TMP_RECT2.set(bounds);
+@@ -319,7 +324,7 @@ public class GlassFrameDrawable extends DrawableWrapper {
+ 
+     /** UZ: o'zi fon chizadigan yuzadan KEYIN: yaltiroq + qirra. EN: after a self-drawn surface: sheen + rim. RU: posle poverkhnosti: blik + obodok. */
+     public static void afterSurface(Canvas canvas, Rect bounds, float radiusPx) {
+-        if (capturing || bounds == null) {
++        if (!isMain() || capturing || bounds == null) {
+             return;
+         }
+         TMP_RECT2.set(bounds);
+@@ -345,7 +350,7 @@ public class GlassFrameDrawable extends DrawableWrapper {
+ 
+             @Override
+             public void draw(Canvas canvas) {
+-                if (capturing) {
++                if (capturing || !isMain()) {
+                     return;
+                 }
+                 final Rect b = getBounds();
+@@ -385,4 +390,12 @@ public class GlassFrameDrawable extends DrawableWrapper {
+         TMP_RECT3.set(r);
+         drawGlassRect(view, canvas, TMP_RECT3, radiusPx);
+     }
++
++    /** UZ: to'rt koordinata bilan (6 argumentli drawRoundRect uchun). EN: with four coordinates. RU: s chetyrmya koordinatami. */
++    public static void drawGlassRect(View view, Canvas canvas, float left, float top, float right, float bottom, float radiusPx) {
++        TMP_RECT4.set(left, top, right, bottom);
++        drawGlassRect(view, canvas, TMP_RECT4, radiusPx);
++    }
++
++    private static final RectF TMP_RECT4 = new RectF();
+ }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/GlassShapeDrawable.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/GlassShapeDrawable.java
+new file mode 100644
+index 00000000..ddf5f806
+--- /dev/null
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/GlassShapeDrawable.java
+@@ -0,0 +1,44 @@
++package org.telegram.ui.Components;
++
++import static org.telegram.messenger.AndroidUtilities.dp;
++
++import android.graphics.Canvas;
++import android.graphics.Rect;
++import android.graphics.RectF;
++import android.graphics.drawable.ShapeDrawable;
++import android.graphics.drawable.shapes.RoundRectShape;
++
++import org.telegram.ui.QrShare.QrGlass;
++
++/**
++ * UZ: Yumaloq fon (tugma, chip, karta) ustiga QR shisha qirrasi; ShapeDrawable turi saqlanadi.
++ * EN: A rounded background (button, chip, card) with the QR glass rim over it; stays a ShapeDrawable.
++ * RU: Zakruglennyj fon s obodkom stekla QR; ostaetsya ShapeDrawable.
++ */
++public class GlassShapeDrawable extends ShapeDrawable {
++
++    private final float radius;
++    private final RectF rect = new RectF();
++
++    public GlassShapeDrawable(RoundRectShape shape, float radius) {
++        super(shape);
++        this.radius = radius;
++    }
++
++    @Override
++    public void draw(Canvas canvas) {
++        super.draw(canvas);
++        if (!GlassFrameDrawable.isMain() || GlassFrameDrawable.isCapturing() || getPaint().getAlpha() < 24 || getPaint().getShader() != null) {
++            return;
++        }
++        final Rect b = getBounds();
++        if (b.width() < dp(24) || b.height() < dp(24)) {
++            return;
++        }
++        try {
++            rect.set(b);
++            QrGlass.drawRim(canvas, rect, Math.min(radius, Math.min(rect.width(), rect.height()) / 2f), QrGlass.RIM_BIG, 0.6f);
++        } catch (Throwable ignore) {
++        }
++    }
++}
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/GroupCallFullscreenAdapter.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/GroupCallFullscreenAdapter.java
+index efe420dc..6fe5eb74 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/GroupCallFullscreenAdapter.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/GroupCallFullscreenAdapter.java
+@@ -314,6 +314,7 @@ public class GroupCallFullscreenAdapter extends RecyclerListView.SelectionAdapte
+                 float p = getMeasuredWidth() / 2f * (1f - progress);
+                 AndroidUtilities.rectTmp.set(p, p, getMeasuredWidth() - p, getMeasuredHeight() - p);
+                 canvas.drawRoundRect(AndroidUtilities.rectTmp, AndroidUtilities.dp(13), AndroidUtilities.dp(13), backgroundPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, AndroidUtilities.dp(13));
+                 drawSelection(canvas);
+             }
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/MessagePreviewView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/MessagePreviewView.java
+index fb91d886..e22b9898 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/MessagePreviewView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/MessagePreviewView.java
+@@ -2207,6 +2207,7 @@ public class MessagePreviewView extends FrameLayout {
+ 
+             if (lowerInRange || higherInRange) {
+                 canvas.drawRoundRect(selectRect, dp(13), dp(13), bgPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, selectRect, dp(13));
+             }
+ 
+             for (int i = 0; i < tabs.size(); ++i) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Views/LPhotoPaintView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Views/LPhotoPaintView.java
+index f6c1862a..d4dba5ef 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Views/LPhotoPaintView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Views/LPhotoPaintView.java
+@@ -687,6 +687,7 @@ public class LPhotoPaintView extends SizeNotifierFrameLayoutPhoto implements IPh
+                 int alpha = typefaceMenuBackgroundPaint.getAlpha();
+                 typefaceMenuBackgroundPaint.setAlpha((int) (alpha * typefaceMenuTransformProgress));
+                 canvas.drawRoundRect(AndroidUtilities.rectTmp, rad, rad, typefaceMenuBackgroundPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, rad);
+                 typefaceMenuBackgroundPaint.setAlpha(alpha);
+ 
+                 canvas.drawRoundRect(AndroidUtilities.rectTmp, rad, rad, typefaceMenuOutlinePaint);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/boosts/BoostCounterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/boosts/BoostCounterView.java
+index 71d747e8..ec7b7142 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/boosts/BoostCounterView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/boosts/BoostCounterView.java
+@@ -112,6 +112,7 @@ public class BoostCounterView extends View {
+         }
+ 
+         canvas.drawRoundRect(AndroidUtilities.rectTmp, dp(10), dp(10), bgPaint);
++        org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, dp(10));
+         AndroidUtilities.rectTmp2.set(0, 0, (int) AndroidUtilities.rectTmp.width(), AndroidUtilities.dp(19));
+         countText.setBounds(AndroidUtilities.rectTmp2);
+         countText.draw(canvas);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/boosts/DiscountSpan.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/boosts/DiscountSpan.java
+index 8373a975..5f7bb20c 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/boosts/DiscountSpan.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Premium/boosts/DiscountSpan.java
+@@ -76,6 +76,7 @@ public class DiscountSpan extends ReplacementSpan {
+         float r = dp(4f);
+         AndroidUtilities.rectTmp.inset(dp(-4.5f), dp(-1.66f));
+         canvas.drawRoundRect(AndroidUtilities.rectTmp, r, r, bgPaint);
++        org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, r);
+         canvas.save();
+         canvas.translate(x, y);
+         layout.draw(canvas);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ReactionTabHolderView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ReactionTabHolderView.java
+index b161ce42..0825efbe 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ReactionTabHolderView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ReactionTabHolderView.java
+@@ -156,6 +156,7 @@ public class ReactionTabHolderView extends FrameLayout implements Theme.Colorabl
+         rect.set(0, 0, getWidth(), getHeight());
+ 
+         canvas.drawRoundRect(rect, radius, radius, bgPaint);
++        org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, radius);
+         super.dispatchDraw(canvas);
+ 
+ //        outlinePaint.setAlpha((int) (outlineProgress * 0xFF));
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsLayoutInBubble.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsLayoutInBubble.java
+index 43fd6128..18b3e19d 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsLayoutInBubble.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/ReactionsLayoutInBubble.java
+@@ -1140,6 +1140,7 @@ public class ReactionsLayoutInBubble {
+                 MessageDrawable messageBackground = ((ChatMessageCell) parentView).getCurrentBackgroundDrawable(false);
+                 if (messageBackground != null && !isTag) {
+                     canvas.drawRoundRect(AndroidUtilities.rectTmp, rad, rad, messageBackground.getPaint());
++                    org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, rad);
+                 }
+             }
+             if (cutTagCircle) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ReactionsContainerLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ReactionsContainerLayout.java
+index ee832dc7..329bb53a 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ReactionsContainerLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ReactionsContainerLayout.java
+@@ -743,6 +743,7 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
+                     blurredBackgroundDrawable.draw(canvas);
+                 } else {
+                     canvas.drawRoundRect(rect, radius, radius, bgPaint);
++                    org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, radius);
+                 }
+             }
+ 
+@@ -2552,6 +2553,7 @@ public class ReactionsContainerLayout extends FrameLayout implements Notificatio
+             canvas.save();
+             canvas.scale(child.getScaleX(), child.getScaleY(), cx, cy);
+             canvas.drawRoundRect(AndroidUtilities.rectTmp, sizeHalf, sizeHalf, backgroundPaint);
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, sizeHalf);
+             canvas.restore();
+ 
+             canvas.save();
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/RecordedAudioPlayerView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/RecordedAudioPlayerView.java
+index d4728c74..93cd2e68 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/RecordedAudioPlayerView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/RecordedAudioPlayerView.java
+@@ -300,6 +300,7 @@ public class RecordedAudioPlayerView extends View {
+             final int wasAlpha = darkerBackgroundPaint.getAlpha();
+             darkerBackgroundPaint.setAlpha((int) (wasAlpha * badgeAlpha));
+             canvas.drawRoundRect(badgeRect, badgeRect.height() / 2f, badgeRect.height() / 2f, darkerBackgroundPaint);
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, badgeRect, badgeRect.height() / 2f);
+             darkerBackgroundPaint.setAlpha(wasAlpha);
+ 
+             badgeClickRect.set(badgeRect);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SuggestBirthdayActionLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/SuggestBirthdayActionLayout.java
+index 8f38834a..28939463 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SuggestBirthdayActionLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SuggestBirthdayActionLayout.java
+@@ -145,6 +145,7 @@ public class SuggestBirthdayActionLayout {
+             final float s = bounce.getScale(0.1f);
+             canvas.scale(s, s, buttonRect.centerX(), buttonRect.centerY());
+             canvas.drawRoundRect(buttonRect, buttonHeight / 2f, buttonHeight / 2f, buttonPaint);
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, buttonRect, buttonHeight / 2f);
+             button.draw(canvas, buttonRect.left + dp(13), buttonRect.centerY(), 0xFFFFFFFF, 1.0f);
+             canvas.restore();
+         }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert2.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert2.java
+index d42d70fe..fbd935b9 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert2.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert2.java
+@@ -1277,6 +1277,7 @@ public class TranslateAlert2 extends BottomSheet implements NotificationCenter.N
+                     }
+                     bgPaint.setColor(Theme.multAlpha(getThemedColor(Theme.key_player_actionBarSubtitle), .1175f));
+                     canvas.drawRoundRect(AndroidUtilities.rectTmp, dp(4), dp(4), bgPaint);
++                    org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, dp(4));
+                     if (links.draw(canvas)) {
+                         invalidate();
+                     }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java
+index 83cbe6cb..20a543d8 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/glass/GlassTabView.java
+@@ -161,6 +161,7 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+             canvas.save();
+             canvas.scale(s, s, tmpRectF.centerX(), tmpRectF.centerY());
+             canvas.drawRoundRect(tmpRectF, r, r, paintCounterBackground);
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, tmpRectF, r);
+             canvas.restore();
+         }
+ 
+@@ -207,6 +208,7 @@ public class GlassTabView extends FrameLayout implements MainTabsLayout.Tab, Fac
+             } else {
+                 paintCounterBackground.setColor(ColorUtils.blendARGB(Theme.getColor(Theme.key_telegram_color), Theme.getColor(Theme.key_fill_RedNormal), isHasCounterErrorAnimator.getFloatValue()));
+                 canvas.drawRoundRect(tmpRectF, rInner, rInner, paintCounterBackground);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, tmpRectF, rInner);
+                 counter.setBounds(tmpRectF);
+                 counter.draw(canvas);
+             }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/quickforward/QuickShareAvatarCell.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/quickforward/QuickShareAvatarCell.java
+index bcc064f1..13c0dbe1 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/quickforward/QuickShareAvatarCell.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/quickforward/QuickShareAvatarCell.java
+@@ -196,6 +196,7 @@ class QuickShareAvatarCell implements ValueAnimator.AnimatorUpdateListener {
+ 
+             bgPaint.setAlpha((int) ((hasGradientService ? cachedAlpha : (255 * 0.9f)) * textAlpha));
+             c.drawRoundRect(tmpRectF, r, r, bgPaint);
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, c, tmpRectF, r);
+             bgPaint.setAlpha(cachedAlpha);
+         }
+ 
+@@ -203,6 +204,7 @@ class QuickShareAvatarCell implements ValueAnimator.AnimatorUpdateListener {
+             cachedAlpha = Theme.chat_actionBackgroundGradientDarkenPaint.getAlpha();
+             Theme.chat_actionBackgroundGradientDarkenPaint.setAlpha((int) (cachedAlpha * textAlpha));
+             c.drawRoundRect(tmpRectF, r, r, Theme.chat_actionBackgroundGradientDarkenPaint);
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, c, tmpRectF, r);
+             Theme.chat_actionBackgroundGradientDarkenPaint.setAlpha(cachedAlpha);
+         }
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/quickforward/QuickShareSelectorDrawable.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/quickforward/QuickShareSelectorDrawable.java
+index 80d99ec3..090064fe 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/quickforward/QuickShareSelectorDrawable.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/quickforward/QuickShareSelectorDrawable.java
+@@ -421,8 +421,10 @@ public class QuickShareSelectorDrawable extends Drawable implements Animator.Ani
+             final float r1 = Math.min(bubbleCurrent.width(), bubbleCurrent.height()) / 2f;
+             final float r2 = Math.min(buttonCurrent.width(), buttonCurrent.height()) / 2f;
+             canvas.drawRoundRect(bubbleCurrent, r1, r1, paintBubbleBg);
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, bubbleCurrent, r1);
+             if (!openAnimationCompleted) {
+                 canvas.drawRoundRect(buttonCurrent, r2, r2, paintBubbleBg);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, buttonCurrent, r2);
+             }
+         }
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/EmojiRationalLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/EmojiRationalLayout.java
+index a97fa69e..087a5cc4 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/EmojiRationalLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/EmojiRationalLayout.java
+@@ -25,6 +25,7 @@ public class EmojiRationalLayout extends LinearLayout {
+         bgRect.set(0, 0, getWidth(), getHeight());
+         backgroundProvider.setDarkTranslation(getX(), getY());
+         canvas.drawRoundRect(bgRect, dp(20), dp(20), backgroundProvider.getDarkPaint());
++        org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, bgRect, dp(20));
+         super.dispatchDraw(canvas);
+     }
+ }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/GroupCallMiniTextureView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/GroupCallMiniTextureView.java
+index 619b328b..be9e75ce 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/GroupCallMiniTextureView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/GroupCallMiniTextureView.java
+@@ -1678,6 +1678,7 @@ public class GroupCallMiniTextureView extends FrameLayout implements GroupCallSt
+             backgroundImageReceiver.draw(canvas);
+ 
+             canvas.drawRoundRect(AndroidUtilities.rectTmp, textureView.roundRadius, textureView.roundRadius, backgroundPaint);
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, textureView.roundRadius);
+ 
+             if (animateToAmplitude != amplitude) {
+                 amplitude += animateAmplitudeDiff * 16;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/HideEmojiTextView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/HideEmojiTextView.java
+index 45481b29..b59ad524 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/HideEmojiTextView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/HideEmojiTextView.java
+@@ -36,6 +36,7 @@ public class HideEmojiTextView extends TextView {
+         bgRect.set(0, 0, getWidth(), getHeight());
+         backgroundProvider.setDarkTranslation(getX() + ((View) getParent()).getX(), getY() + ((View) getParent()).getY());
+         canvas.drawRoundRect(bgRect, dp(16), dp(16), backgroundProvider.getDarkPaint());
++        org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, bgRect, dp(16));
+         super.onDraw(canvas);
+     }
+ }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/RateCallLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/RateCallLayout.java
+index 00a44271..ac49672e 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/RateCallLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/RateCallLayout.java
+@@ -268,6 +268,7 @@ public class RateCallLayout extends FrameLayout {
+             bgRect.set(0, 0, getWidth(), getHeight());
+             backgroundProvider.setDarkTranslation(getX() + ((View) getParent()).getX(), getY() + ((View) getParent()).getY());
+             canvas.drawRoundRect(bgRect, dp(28), dp(28), backgroundProvider.getDarkPaint());
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, bgRect, dp(28));
+             super.dispatchDraw(canvas);
+         }
+     }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/VoIPNotificationsLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/VoIPNotificationsLayout.java
+index 7953eadc..a95d83c2 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/VoIPNotificationsLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/VoIPNotificationsLayout.java
+@@ -258,12 +258,14 @@ public class VoIPNotificationsLayout extends LinearLayout {
+             canvas.saveLayerAlpha(0, 0, getMeasuredWidth(), getMeasuredHeight(), oldDarkAlpha, Canvas.ALL_SAVE_FLAG);
+             backgroundProvider.getDarkPaint(ignoreShader).setAlpha(255);
+             canvas.drawRoundRect(bgRect, dp(16), dp(16), backgroundProvider.getDarkPaint(ignoreShader));
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, bgRect, dp(16));
+             backgroundProvider.getDarkPaint(ignoreShader).setAlpha(oldDarkAlpha);
+ 
+             if (backgroundProvider.isReveal()) {
+                 int oldRevealDarkAlpha = backgroundProvider.getRevealDarkPaint().getAlpha();
+                 backgroundProvider.getRevealDarkPaint().setAlpha(255);
+                 canvas.drawRoundRect(bgRect, dp(16), dp(16), backgroundProvider.getRevealDarkPaint());
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, bgRect, dp(16));
+                 backgroundProvider.getRevealDarkPaint().setAlpha(oldRevealDarkAlpha);
+             }
+             canvas.restore();
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/VoIPStatusTextView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/VoIPStatusTextView.java
+index c60b5caa..70aed58f 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/VoIPStatusTextView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/VoIPStatusTextView.java
+@@ -73,6 +73,7 @@ public class VoIPStatusTextView extends FrameLayout {
+                 float y = getY() + ((View) getParent()).getY() + VoIPStatusTextView.this.getY() + ((View) VoIPStatusTextView.this.getParent()).getY();
+                 backgroundProvider.setDarkTranslation(x, y);
+                 canvas.drawRoundRect(bgRect, dp(16), dp(16), backgroundProvider.getDarkPaint());
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, bgRect, dp(16));
+                 super.onDraw(canvas);
+             }
+         };
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MessageSendPreview.java b/TMessagesProj/src/main/java/org/telegram/ui/MessageSendPreview.java
+index 9637f90e..ce1eae76 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/MessageSendPreview.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/MessageSendPreview.java
+@@ -414,6 +414,7 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
+                     backgroundPaint.setColor(0x1e000000);
+                     backgroundPaint.setAlpha((int) (0x1e * effectDrawable.isNotEmpty() * openProgress));
+                     canvas.drawRoundRect(AndroidUtilities.rectTmp, r, r, backgroundPaint);
++                    org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, r);
+                     effectDrawable.setBounds(AndroidUtilities.rectTmp2);
+                     effectDrawable.setAlpha((int) (0xFF * openProgress));
+                     effectDrawable.draw(canvas);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PeerColorActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/PeerColorActivity.java
+index 806d9fbd..e79c6e71 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/PeerColorActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/PeerColorActivity.java
+@@ -2551,6 +2551,7 @@ public class PeerColorActivity extends BaseFragment implements NotificationCente
+                         (getMeasuredHeight() + dp(22)) / 2f
+                 );
+                 canvas.drawRoundRect(AndroidUtilities.rectTmp, dp(12), dp(12), userTextBackgroundPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, dp(12));
+ 
+                 userText
+                         .ellipsize(maxWidth)
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SponsoredMessageInfoView.java b/TMessagesProj/src/main/java/org/telegram/ui/SponsoredMessageInfoView.java
+index 13ac8a8b..28f6e02a 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/SponsoredMessageInfoView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/SponsoredMessageInfoView.java
+@@ -81,6 +81,7 @@ public class SponsoredMessageInfoView extends FrameLayout {
+                 buttonPaint.setColor(getCurrentTextColor());
+                 AndroidUtilities.rectTmp.set(AndroidUtilities.dp(1), AndroidUtilities.dp(1), getMeasuredWidth() - AndroidUtilities.dp(1), getMeasuredHeight() - AndroidUtilities.dp(1));
+                 canvas.drawRoundRect(AndroidUtilities.rectTmp, AndroidUtilities.dp(4), AndroidUtilities.dp(4), buttonPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, AndroidUtilities.dp(4));
+             }
+         };
+         button.setOnClickListener(new OnClickListener() {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/PaidReactionButton.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/PaidReactionButton.java
+index d1171fea..1fcc5445 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/PaidReactionButton.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/PaidReactionButton.java
+@@ -335,6 +335,7 @@ public class PaidReactionButton extends View {
+                 canvas.translate(-w / 2f, -h / 2f);
+ 
+                 canvas.drawRoundRect(0, 0, w, h, h / 2, h / 2, backgroundPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, 0, 0, w, h, h / 2);
+                 imageReceiver.draw(canvas);
+ 
+                 text.draw(canvas, dp(2 + 14 + 2), h / 2, 0xFFFFFFFF, alpha);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
+index f5db2d14..22b5aabd 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
+@@ -7734,6 +7734,7 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
+                 inputFieldBackground.draw(canvas);
+             } else {
+                 canvas.drawRoundRect(sharedResources.finalRect, radius, radius, inputBackgroundPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, sharedResources.finalRect, radius);
+             }
+             if (progressToKeyboard < 0.5f) {
+                 canvas.save();
+@@ -7762,6 +7763,7 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
+                 emojiKeyboardBackground.draw(canvas);
+             } else {
+                 canvas.drawRoundRect(sharedResources.popupRect, radius, radius, inputBackgroundPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, sharedResources.popupRect, radius);
+             }
+             boolean r = super.drawChild(canvas, child, drawingTime);
+             canvas.restore();
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesIntro.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesIntro.java
+index d5f60033..411b62e2 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesIntro.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoriesIntro.java
+@@ -277,6 +277,7 @@ public class StoriesIntro extends FrameLayout {
+                 rectF.set(backgroundOffset, backgroundOffset, getMeasuredWidth() - backgroundOffset * 2, getMeasuredHeight() - backgroundOffset * 2);
+                 backgroundPaint.setAlpha((int) (30 * progress));
+                 canvas.drawRoundRect(rectF, AndroidUtilities.dpf2(12f), AndroidUtilities.dpf2(12f), backgroundPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rectF, AndroidUtilities.dpf2(12f));
+                 canvas.save();
+                 canvas.scale(1 + 0.05f * progress, 1 + 0.05f * progress, getMeasuredWidth() / 2f, getMeasuredHeight() / 2f);
+             }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoryPrivacyButton.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoryPrivacyButton.java
+index 052aa0d4..adf39822 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoryPrivacyButton.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/StoryPrivacyButton.java
+@@ -167,10 +167,12 @@ public class StoryPrivacyButton extends View {
+         if (crossfade > 0) {
+             backgroundPaint[1].setAlpha(0xFF);
+             canvas.drawRoundRect(AndroidUtilities.rectTmp, dp(12), dp(12), backgroundPaint[1]);
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, dp(12));
+         }
+         if (crossfade < 1) {
+             backgroundPaint[0].setAlpha((int) (0xFF * (1f - crossfade)));
+             canvas.drawRoundRect(AndroidUtilities.rectTmp, dp(12), dp(12), backgroundPaint[0]);
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, dp(12));
+         }
+ 
+         final float iconScale = 0.5f + Math.abs(crossfade - 0.5f);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/CaptionContainerView.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/CaptionContainerView.java
+index 0f506713..8a1f3db1 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/CaptionContainerView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/CaptionContainerView.java
+@@ -558,10 +558,12 @@ public class CaptionContainerView extends FrameLayout {
+                     if (blurPaint == null) {
+                         CaptionContainerView.this.backgroundPaint.setAlpha(0x80);
+                         canvas.drawRoundRect(rectF, radius, radius, CaptionContainerView.this.backgroundPaint);
++                        org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rectF, radius);
+                     } else {
+                         canvas.drawRoundRect(rectF, radius, radius, blurPaint);
+                         CaptionContainerView.this.backgroundPaint.setAlpha(0x50);
+                         canvas.drawRoundRect(rectF, radius, radius, CaptionContainerView.this.backgroundPaint);
++                        org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rectF, radius);
+                     }
+                 }
+             }
+@@ -1077,11 +1079,13 @@ public class CaptionContainerView extends FrameLayout {
+             drawBlur(backgroundBlur, canvas, bounds, r, false, 0, 0, true, 1.0f);
+             backgroundPaint.setAlpha((int) (lerp(0x26, 0x40, keyboardT)));
+             canvas.drawRoundRect(bounds, r, r, backgroundPaint);
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, bounds, r);
+         } else {
+             Paint[] blurPaints = backgroundBlur.getPaints(1f, 0, 0);
+             if (blurPaints == null || blurPaints[1] == null) {
+                 backgroundPaint.setAlpha(0x80);
+                 canvas.drawRoundRect(bounds, r, r, backgroundPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, bounds, r);
+             } else {
+                 if (blurPaints[0] != null) {
+                     canvas.drawRoundRect(bounds, r, r, blurPaints[0]);
+@@ -1091,6 +1095,7 @@ public class CaptionContainerView extends FrameLayout {
+                 }
+                 backgroundPaint.setAlpha(0x33);
+                 canvas.drawRoundRect(bounds, r, r, backgroundPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, bounds, r);
+             }
+         }
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/CaptionStory.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/CaptionStory.java
+index d3ae3c8f..81038f6d 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/CaptionStory.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/CaptionStory.java
+@@ -408,10 +408,13 @@ public class CaptionStory extends CaptionContainerView {
+             lockBackgroundPaint.setColor(0x40000000);
+             lockBackgroundPaint.setAlpha((int) (0x40 * scale));
+             canvas.drawRoundRect(lockBounds, r, r, lockBackgroundPaint);
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, lockBounds, r);
+         } else {
+             canvas.drawRoundRect(lockBounds, r, r, backgroundBlurPaint);
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, lockBounds, r);
+             backgroundPaint.setAlpha((int) (0x33 * scale));
+             canvas.drawRoundRect(lockBounds, r, r, backgroundPaint);
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, lockBounds, r);
+         }
+ 
+         canvas.save();
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/EmojiBottomSheet.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/EmojiBottomSheet.java
+index 0885479e..625984c1 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/EmojiBottomSheet.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/EmojiBottomSheet.java
+@@ -1783,6 +1783,7 @@ public class EmojiBottomSheet extends BottomSheet implements NotificationCenter.
+                 blurBitmapMatrix.postTranslate(0, -getY());
+                 blurBitmapShader.setLocalMatrix(blurBitmapMatrix);
+                 canvas.drawRoundRect(AndroidUtilities.rectTmp, dp(14), dp(14), backgroundBlurPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, dp(14));
+             }
+ 
+             boolean overStatusBar = AndroidUtilities.rectTmp.top < AndroidUtilities.statusBarHeight;
+@@ -3035,6 +3036,7 @@ public class EmojiBottomSheet extends BottomSheet implements NotificationCenter.
+                 canvas.save();
+                 canvas.scale(scale, scale, bounds.centerX(), bounds.centerY());
+                 canvas.drawRoundRect(bounds, dp(8), dp(8), bgPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, bounds, dp(8));
+                 if (lockDrawable != null) {
+                     canvas.saveLayerAlpha(bounds, 0xFF, Canvas.ALL_SAVE_FLAG);
+                 }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/GalleryListView.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/GalleryListView.java
+index 54bfd527..7a29c6cc 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/GalleryListView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/GalleryListView.java
+@@ -1412,6 +1412,7 @@ public class GalleryListView extends FrameLayout implements NotificationCenter.N
+             if (draftLayout != null) {
+                 AndroidUtilities.rectTmp.set(dp(4), dp(4), dp(4 + 6) + draftLayoutWidth + dp(6), dp(5) + draftLayout.getHeight() + dp(2));
+                 canvas.drawRoundRect(AndroidUtilities.rectTmp, dp(10), dp(10), durationBackgroundPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, dp(10));
+ 
+                 canvas.save();
+                 canvas.translate(AndroidUtilities.rectTmp.left + dp(6) - draftLayoutLeft, AndroidUtilities.rectTmp.top + dp(1.33f));
+@@ -1422,6 +1423,7 @@ public class GalleryListView extends FrameLayout implements NotificationCenter.N
+             if (durationLayout != null) {
+                 AndroidUtilities.rectTmp.set(dp(4), getHeight() - dp(4) - durationLayout.getHeight() - dp(2), dp(4) + (drawDurationPlay ? dp(16) : dp(4)) + durationLayoutWidth + dp(5), getHeight() - dp(4));
+                 canvas.drawRoundRect(AndroidUtilities.rectTmp, dp(10), dp(10), durationBackgroundPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, dp(10));
+ 
+                 if (drawDurationPlay) {
+                     durationPlayDrawable.setBounds(
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/MultipleStoriesSelector.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/MultipleStoriesSelector.java
+index 9e9ffbdb..245505cc 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/MultipleStoriesSelector.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/MultipleStoriesSelector.java
+@@ -428,11 +428,13 @@ public class MultipleStoriesSelector extends FrameLayout {
+             drawBlur(backgroundBlur, canvas, bounds, r, false, 0, 0, true, 1.0f);
+             darkenBackground.setAlpha(0x26);
+             canvas.drawRoundRect(bounds, r, r, darkenBackground);
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, bounds, r);
+         } else {
+             Paint[] blurPaints = backgroundBlur.getPaints(1.0f, 0, 0);
+             if (blurPaints == null || blurPaints[1] == null) {
+                 darkenBackground.setAlpha(0x80);
+                 canvas.drawRoundRect(bounds, r, r, darkenBackground);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, bounds, r);
+             } else {
+                 if (blurPaints[0] != null) {
+                     canvas.drawRoundRect(bounds, r, r, blurPaints[0]);
+@@ -442,6 +444,7 @@ public class MultipleStoriesSelector extends FrameLayout {
+                 }
+                 darkenBackground.setAlpha((int) (0x33 * alpha));
+                 canvas.drawRoundRect(bounds, r, r, darkenBackground);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, bounds, r);
+             }
+         }
+         if (alpha < 1.0f) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/PaintView.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/PaintView.java
+index 8ce414b2..57aacb1b 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/PaintView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/PaintView.java
+@@ -899,6 +899,7 @@ public class PaintView extends SizeNotifierFrameLayoutPhoto implements IPhotoPai
+                 int alpha = typefaceMenuBackgroundPaint.getAlpha();
+                 typefaceMenuBackgroundPaint.setAlpha((int) (alpha * typefaceMenuTransformProgress));
+                 canvas.drawRoundRect(AndroidUtilities.rectTmp, rad, rad, typefaceMenuBackgroundPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, rad);
+                 typefaceMenuBackgroundPaint.setAlpha(alpha);
+ 
+                 canvas.drawRoundRect(AndroidUtilities.rectTmp, rad, rad, typefaceMenuOutlinePaint);
+@@ -1627,6 +1628,7 @@ public class PaintView extends SizeNotifierFrameLayoutPhoto implements IPhotoPai
+                         backgroundPaint.setAlpha((int) (0.4f * alpha));
+                         canvas.drawRoundRect(rect, radius, radius, paint);
+                         canvas.drawRoundRect(rect, radius, radius, backgroundPaint);
++                        org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, radius);
+                         //ReactionsContainerLayout.ReactionsContainerDelegate.super.drawRoundRect(canvas, rect, radius, offsetX, offsetY);
+                     }
+                 }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/StoryRecorder.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/StoryRecorder.java
+index 7aeffac6..6f0c46ce 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/StoryRecorder.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/StoryRecorder.java
+@@ -1184,6 +1184,7 @@ public class StoryRecorder implements NotificationCenter.NotificationCenterDeleg
+                         }
+                         fromSourceView.backgroundPaint.setAlpha((int) (0xFF * alpha));
+                         canvas.drawRoundRect(rectF, r, r, fromSourceView.backgroundPaint);
++                        org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rectF, r);
+                     }
+                     if (fromSourceView.iconDrawable != null) {
+                         rect.set(fromSourceView.iconDrawable.getBounds());
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/VideoTimeView.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/VideoTimeView.java
+index 0c2d7a09..9f4130da 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/VideoTimeView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/VideoTimeView.java
+@@ -111,6 +111,7 @@ public class VideoTimeView extends View {
+                 dp(2 + 21)
+         );
+         canvas.drawRoundRect(AndroidUtilities.rectTmp, dp(5), dp(5), backgroundPaint);
++        org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, dp(5));
+ 
+         textDrawable.setBounds((int) (AndroidUtilities.rectTmp.left), (int) AndroidUtilities.rectTmp.top - dp(1), (int) AndroidUtilities.rectTmp.right, (int) AndroidUtilities.rectTmp.bottom);
+         textDrawable.draw(canvas);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/VideoTimerView.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/VideoTimerView.java
+index 8b7b09af..29958c10 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/VideoTimerView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/VideoTimerView.java
+@@ -88,6 +88,7 @@ public class VideoTimerView extends View implements FlashViews.Invertable {
+             AndroidUtilities.dp(18 + 22)
+         );
+         canvas.drawRoundRect(AndroidUtilities.rectTmp, AndroidUtilities.dp(18), AndroidUtilities.dp(18), backgroundPaint);
++        org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, AndroidUtilities.dp(18));
+ 
+         if (recordingT > 0) {
+             long t = System.currentTimeMillis() % 2000L;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ThemePreviewActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ThemePreviewActivity.java
+index a3bfa26d..4f226abb 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ThemePreviewActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ThemePreviewActivity.java
+@@ -1599,8 +1599,10 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
+                             rect.set(0, 0, getMeasuredWidth(), getMeasuredHeight());
+                             Theme.applyServiceShaderMatrixForView(backgroundPlayAnimationView, backgroundImage, themeDelegate);
+                             canvas.drawRoundRect(rect, getMeasuredHeight() / 2, getMeasuredHeight() / 2, themeDelegate.getPaint(Theme.key_paint_chatActionBackground));
++                            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, getMeasuredHeight() / 2);
+                             if (Theme.hasGradientService()) {
+                                 canvas.drawRoundRect(rect, getMeasuredHeight() / 2, getMeasuredHeight() / 2, themeDelegate.getPaint(Theme.key_paint_chatActionBackgroundDarken));
++                                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, getMeasuredHeight() / 2);
+                             }
+                         }
+                     };
+@@ -1764,8 +1766,10 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
+                             rect.set(0, 0, getMeasuredWidth(), getMeasuredHeight());
+                             Theme.applyServiceShaderMatrixForView(messagesPlayAnimationView, backgroundImage, themeDelegate);
+                             canvas.drawRoundRect(rect, getMeasuredHeight() / 2, getMeasuredHeight() / 2, themeDelegate.getPaint(Theme.key_paint_chatActionBackground));
++                            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, getMeasuredHeight() / 2);
+                             if (Theme.hasGradientService()) {
+                                 canvas.drawRoundRect(rect, getMeasuredHeight() / 2, getMeasuredHeight() / 2, themeDelegate.getPaint(Theme.key_paint_chatActionBackgroundDarken));
++                                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, getMeasuredHeight() / 2);
+                             }
+                         }
+                     };
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/bots/BotButtons.java b/TMessagesProj/src/main/java/org/telegram/ui/bots/BotButtons.java
+index 45dd4706..7bba0ca1 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/bots/BotButtons.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/bots/BotButtons.java
+@@ -190,6 +190,7 @@ public class BotButtons extends FrameLayout {
+ 
+             button.backgroundPaint.setColor(Theme.multAlpha(button.backgroundColor.set(state.color), alpha));
+             canvas.drawRoundRect(button.bounds, dp(9), dp(9), button.backgroundPaint);
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, button.bounds, dp(9));
+ 
+             if (progress < 1) {
+                 canvas.save();
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/bots/BotCommandsMenuContainer.java b/TMessagesProj/src/main/java/org/telegram/ui/bots/BotCommandsMenuContainer.java
+index 66facc04..7755e419 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/bots/BotCommandsMenuContainer.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/bots/BotCommandsMenuContainer.java
+@@ -71,6 +71,7 @@ public class BotCommandsMenuContainer extends FrameLayout implements NestedScrol
+                     y
+                 );
+                 canvas.drawRoundRect(AndroidUtilities.rectTmp, dp(4), dp(4), topBackground);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, dp(4));
+                 super.dispatchDraw(canvas);
+             }
+         };
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditor.java b/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditor.java
+index 0c2bf58a..d95f5c1a 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditor.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/iv/RichEditor.java
+@@ -426,6 +426,7 @@ public class RichEditor extends BaseFragment implements NotificationCenter.Notif
+ 
+                     rect.inset(dp(7), dp(7));
+                     canvas.drawRoundRect(rect, rad, rad, bgPaint);
++                    org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, rad);
+ 
+                     if (animateEnterView != null) {
+                         canvas.save();
