@@ -1,0 +1,96 @@
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
+index c251e7a7..dcad24c7 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
+@@ -9148,7 +9148,9 @@ public class Theme {
+     /** UZ: sirt ranglarini yarim shaffof qiladi (xira shisha). EN: makes surface colors translucent (frosted glass). RU: delaet poverhnosti poluprozrachnymi. */
+     private static int glassSurface(int key, int color) {
+         int alpha;
+-        if (key == key_windowBackgroundWhite || key == key_actionBarDefault || key == key_dialogBackground || key == key_chats_menuBackground) {
++        if (key == key_windowBackgroundWhite || key == key_actionBarDefault || key == key_dialogBackground || key == key_chats_menuBackground
++                || key == key_actionBarDefaultSubmenuBackground || key == key_chat_emojiPanelBackground || key == key_chat_messagePanelBackground
++                || key == key_chat_topPanelBackground || key == key_undo_background || key == key_inappPlayerBackground || key == key_returnToCallBackground) {
+             alpha = 0xA0;
+         } else if (key == key_windowBackgroundGray || key == key_dialogBackgroundGray || key == key_graySection) {
+             alpha = 0x90;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiColorPickerWindow.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiColorPickerWindow.java
+index c6fa44eb..c155736e 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiColorPickerWindow.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiColorPickerWindow.java
+@@ -154,7 +154,7 @@ public class EmojiColorPickerWindow extends PopupWindow {
+ 
+             this.resourcesProvider = resourcesProvider;
+ 
+-            backgroundDrawable = getResources().getDrawable(R.drawable.stickers_back_all);
++            backgroundDrawable = GlassFrameDrawable.wrapPopup(getResources().getDrawable(R.drawable.stickers_back_all));
+             arrowDrawable = getResources().getDrawable(R.drawable.stickers_back_arrow);
+             updateColors();
+         }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/UndoView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/UndoView.java
+index 808ce32d..11d16460 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/UndoView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/UndoView.java
+@@ -1686,6 +1686,11 @@ public class UndoView extends FrameLayout implements Theme.Colorable {
+ 
+     float timeReplaceProgress = 1f;
+ 
++    private void drawBackgroundGlass(Canvas canvas) {
++        backgroundDrawable.draw(canvas);
++        GlassFrameDrawable.afterSurface(canvas, backgroundDrawable.getBounds(), AndroidUtilities.dp(10));
++    }
++
+     @Override
+     protected void dispatchDraw(Canvas canvas) {
+         if (additionalTranslationY != 0) {
+@@ -1712,10 +1717,10 @@ public class UndoView extends FrameLayout implements Theme.Colorable {
+                 canvas.clipRect(0, 0, getMeasuredWidth(), bottom);
+                 super.dispatchDraw(canvas);
+             }
+-            backgroundDrawable.draw(canvas);
++            drawBackgroundGlass(canvas);
+             canvas.restore();
+         } else {
+-            backgroundDrawable.draw(canvas);
++            drawBackgroundGlass(canvas);
+         }
+ 
+         if (currentAction == ACTION_DELETE || currentAction == ACTION_LEAVE || currentAction == ACTION_CLEAR || currentAction == ACTION_DELETE_FEW || currentAction == ACTION_CLEAR_FEW || currentAction == ACTION_CLEAR_DATES || currentAction == ACTION_SHARED_FOLDER_DELETED) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/drawable/BlurredBackgroundDrawable.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/drawable/BlurredBackgroundDrawable.java
+index c2afb995..32cb3bdc 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/drawable/BlurredBackgroundDrawable.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/blur3/drawable/BlurredBackgroundDrawable.java
+@@ -380,10 +380,19 @@ public class BlurredBackgroundDrawable extends GlassDrawable implements Theme.Co
+         return this;
+     }
+ 
++    private static GlassRim qrDefaultRim;
++
+     private GlassRim getRim() {
+         if (rim != null) {
+             return rim;
+         }
++        if (!evenRim) {
++            // UZ: hamma shisha yuzalar QR ekranidagi qirra bilan. EN: every glass surface uses the QR rim. RU: vse steklyannye poverkhnosti s obodkom QR.
++            if (qrDefaultRim == null) {
++                qrDefaultRim = GlassRim.qrBig();
++            }
++            return qrDefaultRim;
++        }
+         if (rimFromColors == null) {
+             rimFromColors = evenRim
+                 ? GlassRim.evenOf(
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/SelectAnimatedEmojiDialog.java b/TMessagesProj/src/main/java/org/telegram/ui/SelectAnimatedEmojiDialog.java
+index 6328e319..0028dca3 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/SelectAnimatedEmojiDialog.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/SelectAnimatedEmojiDialog.java
+@@ -586,6 +586,10 @@ public class SelectAnimatedEmojiDialog extends FrameLayout implements Notificati
+                 } else {
+                     super.dispatchDraw(canvas);
+                 }
++                if (getWidth() > 0 && getHeight() > 0) {
++                    AndroidUtilities.rectTmp.set(getPaddingLeft(), getPaddingTop(), getWidth() - getPaddingRight(), getHeight() - getPaddingBottom());
++                    org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, AndroidUtilities.dp(12));
++                }
+             }
+         };
+ 
