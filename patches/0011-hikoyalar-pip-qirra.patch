@@ -1,0 +1,138 @@
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/GlassFrameDrawable.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/GlassFrameDrawable.java
+index 19071e69..cfcbd639 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/GlassFrameDrawable.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/GlassFrameDrawable.java
+@@ -337,4 +337,41 @@ public class GlassFrameDrawable extends DrawableWrapper {
+     public static Drawable wrapPopup(Drawable inner) {
+         return new GlassFrameDrawable(inner, 10);
+     }
++
++    /** UZ: faqat qirra chizadigan drawable (video/PiP oynalari ustiga). EN: a rim-only drawable (over video/PiP windows). RU: drawable tolko s obodkom. */
++    public static Drawable rimOnly(final float radiusDp) {
++        return new Drawable() {
++            private final RectF r = new RectF();
++
++            @Override
++            public void draw(Canvas canvas) {
++                if (capturing) {
++                    return;
++                }
++                final Rect b = getBounds();
++                if (b.width() < dp(8) || b.height() < dp(8)) {
++                    return;
++                }
++                try {
++                    r.set(b);
++                    final float rad = Math.min(dp(radiusDp), Math.min(r.width(), r.height()) / 2f);
++                    QrGlass.drawRim(canvas, r, rad, QrGlass.RIM_BIG, 1f);
++                } catch (Throwable ignore) {
++                }
++            }
++
++            @Override
++            public void setAlpha(int alpha) {
++            }
++
++            @Override
++            public void setColorFilter(ColorFilter colorFilter) {
++            }
++
++            @Override
++            public int getOpacity() {
++                return android.graphics.PixelFormat.TRANSLUCENT;
++            }
++        };
++    }
+ }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/PipRoundVideoView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/PipRoundVideoView.java
+index f9b52e7b..be52fb03 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/PipRoundVideoView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/PipRoundVideoView.java
+@@ -213,6 +213,7 @@ public class PipRoundVideoView implements NotificationCenter.NotificationCenterD
+                 }
+             });
+             aspectRatioFrameLayout.setClipToOutline(true);
++            aspectRatioFrameLayout.setForeground(GlassFrameDrawable.rimOnly(1000));
+         } else {
+             final Paint aspectPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+             aspectPaint.setColor(0xff000000);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/VoIPPiPView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/VoIPPiPView.java
+index 1ed096d8..dace2eab 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/VoIPPiPView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/voip/VoIPPiPView.java
+@@ -312,6 +312,7 @@ public class VoIPPiPView implements VoIPService.StateListener, NotificationCente
+         floatingView.addView(callingUserTextureView);
+         floatingView.addView(currentUserTextureView);
+         floatingView.setBackgroundColor(Color.GRAY);
++        floatingView.setForeground(org.telegram.ui.Components.GlassFrameDrawable.rimOnly(10));
+         windowView.addView(floatingView);
+         windowView.setClipChildren(false);
+         windowView.setClipToPadding(false);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
+index c1a0b5f0..f5db2d14 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/PeerStoriesView.java
+@@ -3659,6 +3659,7 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
+                 AndroidUtilities.rectTmp.offset(0, 0);
+                 canvas.drawRoundRect(AndroidUtilities.rectTmp, radius, radius, bitmapShaderTools.paint);
+                 canvas.drawRoundRect(AndroidUtilities.rectTmp, radius, radius, inputBackgroundPaint);
++                org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, radius);
+                 if (AndroidUtilities.rectTmp.top < getMeasuredHeight() - 1) {
+                     canvas.drawRect(0, getMeasuredHeight(), getMeasuredWidth(), getMeasuredHeight() - 1, resourcesProvider.getPaint(Theme.key_paint_divider));
+                 }
+@@ -8003,6 +8004,7 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
+                     if (radius > 0) {
+                         canvas.drawRoundRect(rect, radius, radius, bitmapShaderTools.paint);
+                         canvas.drawRoundRect(rect, radius, radius, inputBackgroundPaint);
++                        org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rect, radius);
+                     } else {
+                         canvas.drawRect(rect, bitmapShaderTools.paint);
+                         canvas.drawRect(rect, inputBackgroundPaint);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/CaptionContainerView.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/CaptionContainerView.java
+index d7a0c740..0f506713 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/CaptionContainerView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/CaptionContainerView.java
+@@ -1273,6 +1273,7 @@ public class CaptionContainerView extends FrameLayout {
+         }
+         backgroundPaint.setAlpha((int) (blurPaint == null ? 0x80 : lerp(0x80, 0x99, keyboardT) * alpha));
+         canvas.drawRoundRect(rectF, r, r, backgroundPaint);
++        org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, rectF, r);
+     }
+ 
+     @Override
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/EmojiBottomSheet.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/EmojiBottomSheet.java
+index f0ff1e1f..0885479e 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/EmojiBottomSheet.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/EmojiBottomSheet.java
+@@ -1791,6 +1791,7 @@ public class EmojiBottomSheet extends BottomSheet implements NotificationCenter.
+                 AndroidUtilities.setLightStatusBar(getWindow(), overStatusBar ? AndroidUtilities.computePerceivedBrightness(backgroundPaint.getColor()) >= .721f : false);
+             }
+             canvas.drawRoundRect(AndroidUtilities.rectTmp, (1f - statusBar) * dp(14), (1f - statusBar) * dp(14), backgroundPaint);
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, (1f - statusBar) * dp(14));
+             handleRect.set(
+                 (getWidth() - dp(36)) / 2f,
+                 y + dp(9.66f),
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/GalleryListView.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/GalleryListView.java
+index 53d0d241..54bfd527 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/GalleryListView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/GalleryListView.java
+@@ -698,6 +698,7 @@ public class GalleryListView extends FrameLayout implements NotificationCenter.N
+         }
+         AndroidUtilities.rectTmp.set(0, top, getWidth(), getHeight() + dp(14));
+         canvas.drawRoundRect(AndroidUtilities.rectTmp, dp(14), dp(14), backgroundPaint);
++        org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, dp(14));
+         canvas.save();
+         canvas.clipRect(0, top, getWidth(), getHeight());
+         super.dispatchDraw(canvas);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/PreviewButtons.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/PreviewButtons.java
+index 2fe7b803..6bbe2347 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/PreviewButtons.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/PreviewButtons.java
+@@ -301,6 +301,7 @@ public class PreviewButtons extends FrameLayout {
+             canvas.saveLayerAlpha(0, 0, getWidth(), getHeight(), 0xFF, Canvas.ALL_SAVE_FLAG);
+             AndroidUtilities.rectTmp.set(dp(10), dp(4), getWidth() - dp(10), getHeight() - dp(4));
+             canvas.drawRoundRect(AndroidUtilities.rectTmp, dp(20), dp(20), buttonPaint);
++            org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, dp(20));
+ 
+             canvas.save();
+             canvas.translate((w - width) / 2f + dp(arrow ? 3 : 0) - left, (getHeight() - staticLayout.getHeight()) / 2f);
