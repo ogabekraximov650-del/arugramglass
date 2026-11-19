@@ -1,0 +1,380 @@
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarMenuItem.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarMenuItem.java
+index 4380aac5..46575250 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarMenuItem.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarMenuItem.java
+@@ -977,7 +977,7 @@ public class ActionBarMenuItem extends FrameLayout {
+                         .setPadding(dp(8))
+                         .setHasPadding(true));
+                 } else {
+-                    Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.popup_fixed_alert2).mutate();
++                    Drawable drawable = org.telegram.ui.Components.GlassFrameDrawable.wrapPopup(ContextCompat.getDrawable(getContext(), R.drawable.popup_fixed_alert2).mutate());
+                     drawable.setColorFilter(new PorterDuffColorFilter(popupLayout.getBackgroundColor(), PorterDuff.Mode.MULTIPLY));
+                     frameLayout.setBackground(drawable);
+                 }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChannelAdminLogActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChannelAdminLogActivity.java
+index b7b9891c..2472db78 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChannelAdminLogActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChannelAdminLogActivity.java
+@@ -1844,7 +1844,7 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
+             ActionBarPopupWindow.ActionBarPopupWindowLayout popupLayout = new ActionBarPopupWindow.ActionBarPopupWindowLayout(getParentActivity(), R.drawable.popup_fixed_alert, getResourceProvider(), 0);
+             popupLayout.setMinimumWidth(dp(200));
+             Rect backgroundPaddings = new Rect();
+-            Drawable shadowDrawable = getParentActivity().getResources().getDrawable(R.drawable.popup_fixed_alert).mutate();
++            Drawable shadowDrawable = org.telegram.ui.Components.GlassFrameDrawable.wrapPopup(getParentActivity().getResources().getDrawable(R.drawable.popup_fixed_alert).mutate());
+             shadowDrawable.getPadding(backgroundPaddings);
+             ThemeBind.backgroundColor(popupLayout, Theme.key_actionBarDefaultSubmenuBackground, getResourceProvider());
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+index a54b1341..d74f8e99 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ChatActivity.java
+@@ -32026,7 +32026,7 @@ public class ChatActivity extends BaseFragment implements
+             ActionBarPopupWindow.ActionBarPopupWindowLayout popupLayout = new ActionBarPopupWindow.ActionBarPopupWindowLayout(getParentActivity(), R.drawable.popup_fixed_alert4, themeDelegate, flags);
+             popupLayout.setMinimumWidth(AndroidUtilities.dp(200));
+             Rect backgroundPaddings = new Rect();
+-            Drawable shadowDrawable = getParentActivity().getResources().getDrawable(R.drawable.popup_fixed_alert4).mutate();
++            Drawable shadowDrawable = org.telegram.ui.Components.GlassFrameDrawable.wrapPopup(getParentActivity().getResources().getDrawable(R.drawable.popup_fixed_alert4).mutate());
+             shadowDrawable.getPadding(backgroundPaddings);
+             ThemeBind.backgroundColor(popupLayout, Theme.key_actionBarDefaultSubmenuBackground, getResourceProvider());
+             MessageSeenView messageSeenView = null;
+@@ -33206,7 +33206,7 @@ public class ChatActivity extends BaseFragment implements
+                     }
+                     tv.setMaxWidth(popupLayout.getMeasuredWidth() - AndroidUtilities.dp(38));
+ 
+-                    Drawable shadowDrawable2 = ContextCompat.getDrawable(contentView.getContext(), R.drawable.popup_fixed_alert4).mutate();
++                    Drawable shadowDrawable2 = org.telegram.ui.Components.GlassFrameDrawable.wrapPopup(ContextCompat.getDrawable(contentView.getContext(), R.drawable.popup_fixed_alert4).mutate());
+                     shadowDrawable2.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_actionBarDefaultSubmenuBackground), PorterDuff.Mode.MULTIPLY));
+ 
+                     FrameLayout fl = new FrameLayout(contentView.getContext());
+@@ -33230,7 +33230,7 @@ public class ChatActivity extends BaseFragment implements
+                     tv.setText(text);
+                     tv.setMaxWidth(popupLayout.getMeasuredWidth() - AndroidUtilities.dp(38));
+ 
+-                    Drawable shadowDrawable2 = ContextCompat.getDrawable(contentView.getContext(), R.drawable.popup_fixed_alert4).mutate();
++                    Drawable shadowDrawable2 = org.telegram.ui.Components.GlassFrameDrawable.wrapPopup(ContextCompat.getDrawable(contentView.getContext(), R.drawable.popup_fixed_alert4).mutate());
+                     shadowDrawable2.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_actionBarDefaultSubmenuBackground), PorterDuff.Mode.MULTIPLY));
+ 
+                     FrameLayout fl = new FrameLayout(contentView.getContext());
+@@ -41452,7 +41452,7 @@ public class ChatActivity extends BaseFragment implements
+             }
+ 
+             Rect backgroundPaddings = new Rect();
+-            Drawable shadowDrawable2 = ContextCompat.getDrawable(getParentActivity(), R.drawable.popup_fixed_alert4).mutate();
++            Drawable shadowDrawable2 = org.telegram.ui.Components.GlassFrameDrawable.wrapPopup(ContextCompat.getDrawable(getParentActivity(), R.drawable.popup_fixed_alert4).mutate());
+             ThemeBind.drawableColorFilter(scrimPopupContainerLayout, shadowDrawable2, Theme.key_actionBarDefaultSubmenuBackground, ChatActivity.this.getResourceProvider(), PorterDuff.Mode.MULTIPLY);
+             shadowDrawable2.getPadding(backgroundPaddings);
+             scrimPopupContainerLayout.setBackground(shadowDrawable2);
+@@ -44905,7 +44905,7 @@ public class ChatActivity extends BaseFragment implements
+                     cell.setOnClickListener(e -> {
+ 
+                         ActionBarPopupWindow.ActionBarPopupWindowLayout layout = new ActionBarPopupWindow.ActionBarPopupWindowLayout(getContext());
+-                        Drawable shadowDrawable2 = ContextCompat.getDrawable(getContext(), R.drawable.popup_fixed_alert4).mutate();
++                        Drawable shadowDrawable2 = org.telegram.ui.Components.GlassFrameDrawable.wrapPopup(ContextCompat.getDrawable(getContext(), R.drawable.popup_fixed_alert4).mutate());
+                         ThemeBind.drawableColorFilter(layout, shadowDrawable2, Theme.key_actionBarDefaultSubmenuBackground, getResourceProvider(), PorterDuff.Mode.MULTIPLY);
+                         layout.setBackground(shadowDrawable2);
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/BackButtonMenu.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/BackButtonMenu.java
+index 3a34e0ea..50854053 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/BackButtonMenu.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/BackButtonMenu.java
+@@ -75,7 +75,7 @@ public class BackButtonMenu {
+ 
+         ActionBarPopupWindow.ActionBarPopupWindowLayout layout = new ActionBarPopupWindow.ActionBarPopupWindowLayout(context, R.drawable.popup_fixed_alert4, resourcesProvider);
+         android.graphics.Rect backgroundPaddings = new Rect();
+-        Drawable shadowDrawable = thisFragment.getParentActivity().getResources().getDrawable(R.drawable.popup_fixed_alert4).mutate();
++        Drawable shadowDrawable = org.telegram.ui.Components.GlassFrameDrawable.wrapPopup(thisFragment.getParentActivity().getResources().getDrawable(R.drawable.popup_fixed_alert4).mutate());
+         shadowDrawable.getPadding(backgroundPaddings);
+         ThemeBind.backgroundColor(layout, Theme.key_actionBarDefaultSubmenuBackground, resourcesProvider);
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/CastMediaRouteButton.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/CastMediaRouteButton.java
+index 66cd021c..b88f3d37 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/CastMediaRouteButton.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/CastMediaRouteButton.java
+@@ -56,7 +56,7 @@ public class CastMediaRouteButton extends MediaRouteButton {
+         public void onStart() {
+             super.onStart();
+             if (getDialog() != null && getDialog().getWindow() != null) {
+-                Drawable drawable = getContext().getResources().getDrawable(R.drawable.popup_fixed_alert3).mutate();
++                Drawable drawable = org.telegram.ui.Components.GlassFrameDrawable.wrapPopup(getContext().getResources().getDrawable(R.drawable.popup_fixed_alert3).mutate());
+                 drawable.setColorFilter(new PorterDuffColorFilter(0xF9222222, PorterDuff.Mode.SRC_IN));
+                 getDialog().getWindow().setBackgroundDrawable(drawable);
+             }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ClearHistoryAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ClearHistoryAlert.java
+index 9025b1c8..220a9daf 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ClearHistoryAlert.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ClearHistoryAlert.java
+@@ -137,7 +137,7 @@ public class ClearHistoryAlert extends BottomSheet {
+             newTimer = currentTimer = 3;
+         }
+ 
+-        shadowDrawable = context.getResources().getDrawable(R.drawable.sheet_shadow_round).mutate();
++        shadowDrawable = org.telegram.ui.Components.GlassFrameDrawable.wrapSheet(context.getResources().getDrawable(R.drawable.sheet_shadow_round).mutate());
+         shadowDrawable.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_dialogBackground), PorterDuff.Mode.MULTIPLY));
+ 
+         NestedScrollView scrollView = new NestedScrollView(context) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiPacksAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiPacksAlert.java
+index 0b7b638b..86379163 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiPacksAlert.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/EmojiPacksAlert.java
+@@ -445,7 +445,7 @@ public class EmojiPacksAlert extends BottomSheet implements NotificationCenter.N
+                 });
+ 
+                 LinearLayout layout = new LinearLayout(context);
+-                Drawable shadowDrawable2 = ContextCompat.getDrawable(getContext(), R.drawable.popup_fixed_alert).mutate();
++                Drawable shadowDrawable2 = org.telegram.ui.Components.GlassFrameDrawable.wrapPopup(ContextCompat.getDrawable(getContext(), R.drawable.popup_fixed_alert).mutate());
+                 ThemeBind.drawableColorFilter(layout, shadowDrawable2, Theme.key_actionBarDefaultSubmenuBackground, resourcesProvider, PorterDuff.Mode.MULTIPLY);
+                 layout.setBackground(shadowDrawable2);
+                 layout.addView(copyButton);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/GlassFrameDrawable.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/GlassFrameDrawable.java
+index 125d315a..19071e69 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/GlassFrameDrawable.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/GlassFrameDrawable.java
+@@ -327,4 +327,14 @@ public class GlassFrameDrawable extends DrawableWrapper {
+     }
+ 
+     private static final RectF TMP_RECT2 = new RectF();
++
++    /** UZ: standart "sheet" fonini shishaga o'raydi. EN: wraps a stock sheet background into glass. RU: oborachivaet fon sheet v steklo. */
++    public static Drawable wrapSheet(Drawable inner) {
++        return new GlassFrameDrawable(inner, 16);
++    }
++
++    /** UZ: standart popup/menyu fonini shishaga o'raydi. EN: wraps a stock popup background into glass. RU: oborachivaet fon popup v steklo. */
++    public static Drawable wrapPopup(Drawable inner) {
++        return new GlassFrameDrawable(inner, 10);
++    }
+ }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.java
+index 6682c321..5184041b 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ItemOptions.java
+@@ -1238,7 +1238,7 @@ public class ItemOptions {
+     }
+ 
+     public ItemOptions setBlurBackground(BlurringShader.BlurManager blurManager, float ox, float oy) {
+-        Drawable baseDrawable = context.getResources().getDrawable(R.drawable.popup_fixed_alert4).mutate();
++        Drawable baseDrawable = org.telegram.ui.Components.GlassFrameDrawable.wrapPopup(context.getResources().getDrawable(R.drawable.popup_fixed_alert4).mutate());
+         if (layout instanceof ActionBarPopupWindow.ActionBarPopupWindowLayout) {
+             layout.setBackground(
+                 new BlurringShader.StoryBlurDrawer(blurManager, layout, BlurringShader.StoryBlurDrawer.BLUR_TYPE_MENU_BACKGROUND)
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/JoinCallAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/JoinCallAlert.java
+index 0c604cd1..7a368c42 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/JoinCallAlert.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/JoinCallAlert.java
+@@ -320,7 +320,7 @@ public class JoinCallAlert extends BottomSheet {
+         currentType = type;
+ 
+         int backgroundColor;
+-        shadowDrawable = context.getResources().getDrawable(R.drawable.sheet_shadow_round).mutate();
++        shadowDrawable = org.telegram.ui.Components.GlassFrameDrawable.wrapSheet(context.getResources().getDrawable(R.drawable.sheet_shadow_round).mutate());
+         if (type == TYPE_DISPLAY) {
+             if (VoIPService.getSharedInstance() != null) {
+                 long did = VoIPService.getSharedInstance().getSelfId();
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/ColorPickerBottomSheet.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/ColorPickerBottomSheet.java
+index fa6d29ac..d6ee02c4 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/ColorPickerBottomSheet.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/ColorPickerBottomSheet.java
+@@ -80,7 +80,7 @@ public class ColorPickerBottomSheet extends BottomSheet {
+ 
+         fixNavigationBar(0xff252525);
+ 
+-        shadowDrawable = context.getResources().getDrawable(R.drawable.sheet_shadow_round).mutate();
++        shadowDrawable = org.telegram.ui.Components.GlassFrameDrawable.wrapSheet(context.getResources().getDrawable(R.drawable.sheet_shadow_round).mutate());
+         shadowDrawable.setColorFilter(new PorterDuffColorFilter(0xff252525, PorterDuff.Mode.MULTIPLY));
+ 
+         LinearLayout linearLayout = new LinearLayout(context);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/PollVotesAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/PollVotesAlert.java
+index c90d4e29..1bdad361 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/PollVotesAlert.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/PollVotesAlert.java
+@@ -691,7 +691,7 @@ public class PollVotesAlert extends BottomSheet {
+ 
+         updatePlaceholder();
+ 
+-        shadowDrawable = context.getResources().getDrawable(R.drawable.sheet_shadow_round).mutate();
++        shadowDrawable = org.telegram.ui.Components.GlassFrameDrawable.wrapSheet(context.getResources().getDrawable(R.drawable.sheet_shadow_round).mutate());
+         shadowDrawable.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_dialogBackgroundGray), PorterDuff.Mode.MULTIPLY));
+ 
+         containerView = new FrameLayout(context) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ProximitySheet.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ProximitySheet.java
+index 30b009bb..39e8c795 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ProximitySheet.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ProximitySheet.java
+@@ -93,7 +93,7 @@ public class ProximitySheet extends FrameLayout {
+         touchSlop = vc.getScaledTouchSlop();
+ 
+         Rect padding = new Rect();
+-        Drawable shadowDrawable = context.getResources().getDrawable(R.drawable.sheet_shadow_round).mutate();
++        Drawable shadowDrawable = org.telegram.ui.Components.GlassFrameDrawable.wrapSheet(context.getResources().getDrawable(R.drawable.sheet_shadow_round).mutate());
+         ThemeBind.drawableColorFilter(this, shadowDrawable, Theme.key_dialogBackground, PorterDuff.Mode.MULTIPLY);
+         shadowDrawable.getPadding(padding);
+         backgroundPaddingLeft = padding.left;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SenderSelectPopup.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/SenderSelectPopup.java
+index a1212aac..eb6f2e8d 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SenderSelectPopup.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SenderSelectPopup.java
+@@ -114,7 +114,7 @@ public class SenderSelectPopup extends ActionBarPopupWindow {
+ 
+         setBackgroundDrawable(null);
+ 
+-        Drawable shadowDrawable = ContextCompat.getDrawable(context, R.drawable.popup_fixed_alert4).mutate();
++        Drawable shadowDrawable = org.telegram.ui.Components.GlassFrameDrawable.wrapPopup(ContextCompat.getDrawable(context, R.drawable.popup_fixed_alert4).mutate());
+         ThemeBind.drawableColorFilter(scrimPopupContainerLayout, shadowDrawable, Theme.key_actionBarDefaultSubmenuBackground, resourcesProvider, PorterDuff.Mode.MULTIPLY);
+         scrimPopupContainerLayout.setBackground(shadowDrawable);
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
+index ce58490e..cd97fdb7 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ShareAlert.java
+@@ -449,7 +449,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
+         iBlur3SourceColor.setColor(getThemedColor(Theme.key_windowBackgroundWhite));
+ 
+         parentFragment = fragment;
+-        shadowDrawable = context.getResources().getDrawable(R.drawable.sheet_shadow_round).mutate();
++        shadowDrawable = org.telegram.ui.Components.GlassFrameDrawable.wrapSheet(context.getResources().getDrawable(R.drawable.sheet_shadow_round).mutate());
+         int backgroundColor = getThemedColor(behindKeyboardColorKey = Theme.key_dialogBackground);
+         shadowDrawable.setColorFilter(new PorterDuffColorFilter(backgroundColor, PorterDuff.Mode.MULTIPLY));
+ //        fixNavigationBar(backgroundColor);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharingLocationsAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharingLocationsAlert.java
+index 79f14688..67d5e554 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/SharingLocationsAlert.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/SharingLocationsAlert.java
+@@ -66,7 +66,7 @@ public class SharingLocationsAlert extends BottomSheet implements NotificationCe
+         delegate = sharingLocationsAlertDelegate;
+         fixNavigationBar();
+ 
+-        shadowDrawable = context.getResources().getDrawable(R.drawable.sheet_shadow_round).mutate();
++        shadowDrawable = org.telegram.ui.Components.GlassFrameDrawable.wrapSheet(context.getResources().getDrawable(R.drawable.sheet_shadow_round).mutate());
+         shadowDrawable.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_dialogBackground), PorterDuff.Mode.MULTIPLY));
+ 
+         containerView = new FrameLayout(context) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/StickerMasksAlert.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/StickerMasksAlert.java
+index add28756..2f46a2bd 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/StickerMasksAlert.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/StickerMasksAlert.java
+@@ -323,7 +323,7 @@ public class StickerMasksAlert extends BottomSheet implements NotificationCenter
+         MediaDataController.getInstance(currentAccount).loadRecents(MediaDataController.TYPE_MASK, false, true, false);
+         MediaDataController.getInstance(currentAccount).loadRecents(MediaDataController.TYPE_FAVE, false, true, false);
+ 
+-        shadowDrawable = context.getResources().getDrawable(R.drawable.sheet_shadow_round).mutate();
++        shadowDrawable = org.telegram.ui.Components.GlassFrameDrawable.wrapSheet(context.getResources().getDrawable(R.drawable.sheet_shadow_round).mutate());
+         shadowDrawable.setColorFilter(new PorterDuffColorFilter(0xff252525, PorterDuff.Mode.MULTIPLY));
+ 
+         containerView = new SizeNotifierFrameLayout(context) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ThemeEditorView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ThemeEditorView.java
+index ee861ec4..dd0bcd18 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ThemeEditorView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ThemeEditorView.java
+@@ -720,7 +720,7 @@ public class ThemeEditorView {
+         public EditorAlert(final Context context, ArrayList<ThemeDescription> items) {
+             super(context, true);
+ 
+-            shadowDrawable = context.getResources().getDrawable(R.drawable.sheet_shadow_round).mutate();
++            shadowDrawable = org.telegram.ui.Components.GlassFrameDrawable.wrapSheet(context.getResources().getDrawable(R.drawable.sheet_shadow_round).mutate());
+ 
+             containerView = new FrameLayout(context) {
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert2.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert2.java
+index aeaf64fb..d42d70fe 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert2.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/TranslateAlert2.java
+@@ -1351,7 +1351,7 @@ public class TranslateAlert2 extends BottomSheet implements NotificationCenter.N
+                 }
+             };
+ 
+-            Drawable shadowDrawable2 = ContextCompat.getDrawable(getContext(), R.drawable.popup_fixed_alert).mutate();
++            Drawable shadowDrawable2 = org.telegram.ui.Components.GlassFrameDrawable.wrapPopup(ContextCompat.getDrawable(getContext(), R.drawable.popup_fixed_alert).mutate());
+             ThemeBind.drawableColorFilter(this, shadowDrawable2, Theme.key_actionBarDefaultSubmenuBackground, TranslateAlert2.this.resourcesProvider, PorterDuff.Mode.MULTIPLY);
+             layout.setBackground(shadowDrawable2);
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/UsersAlertBase.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/UsersAlertBase.java
+index ee959d89..109b7a5e 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/UsersAlertBase.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/UsersAlertBase.java
+@@ -96,7 +96,7 @@ public class UsersAlertBase extends BottomSheet {
+ 
+         currentAccount = account;
+ 
+-        shadowDrawable = context.getResources().getDrawable(R.drawable.sheet_shadow_round).mutate();
++        shadowDrawable = org.telegram.ui.Components.GlassFrameDrawable.wrapSheet(context.getResources().getDrawable(R.drawable.sheet_shadow_round).mutate());
+ 
+         containerView = createContainerView(context);
+         containerView.setWillNotDraw(false);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Delegates/MemberRequestsDelegate.java b/TMessagesProj/src/main/java/org/telegram/ui/Delegates/MemberRequestsDelegate.java
+index a5e7d872..2216d1b3 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Delegates/MemberRequestsDelegate.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Delegates/MemberRequestsDelegate.java
+@@ -729,7 +729,7 @@ public class MemberRequestsDelegate implements MemberRequestCell.OnClickListener
+ 
+         private final int shadowPaddingTop;
+         private final int shadowPaddingLeft;
+-        private final Drawable pagerShadowDrawable = getContext().getResources().getDrawable(R.drawable.popup_fixed_alert2).mutate();
++        private final Drawable pagerShadowDrawable = org.telegram.ui.Components.GlassFrameDrawable.wrapPopup(getContext().getResources().getDrawable(R.drawable.popup_fixed_alert2).mutate());
+         private final TextView nameText = new TextView(getContext());
+         private final TextView bioText = new TextView(getContext());
+         private final ActionBarPopupWindow.ActionBarPopupWindowLayout popupLayout;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/GradientHeaderActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/GradientHeaderActivity.java
+index a678a750..0640c08f 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/GradientHeaderActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/GradientHeaderActivity.java
+@@ -160,7 +160,7 @@ public abstract class GradientHeaderActivity extends BaseFragment {
+         hasOwnBackground = true;
+ 
+         Rect padding = new Rect();
+-        shadowDrawable = ContextCompat.getDrawable(context, R.drawable.sheet_shadow_round).mutate();
++        shadowDrawable = org.telegram.ui.Components.GlassFrameDrawable.wrapSheet(ContextCompat.getDrawable(context, R.drawable.sheet_shadow_round).mutate());
+         shadowDrawable.setColorFilter(new PorterDuffColorFilter(appliedShadowColor = getThemedColor(Theme.key_dialogBackground), PorterDuff.Mode.MULTIPLY));
+         shadowDrawable.getPadding(padding);
+         statusBarHeight = parentLayout != null && parentLayout.isLayersLayout() ? 0 : AndroidUtilities.statusBarHeight;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/PremiumPreviewFragment.java b/TMessagesProj/src/main/java/org/telegram/ui/PremiumPreviewFragment.java
+index 4295a189..fe339074 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/PremiumPreviewFragment.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/PremiumPreviewFragment.java
+@@ -568,7 +568,7 @@ public class PremiumPreviewFragment extends BaseFragment implements Notification
+         }
+ 
+         Rect padding = new Rect();
+-        shadowDrawable = context.getResources().getDrawable(R.drawable.sheet_shadow_round).mutate();
++        shadowDrawable = org.telegram.ui.Components.GlassFrameDrawable.wrapSheet(context.getResources().getDrawable(R.drawable.sheet_shadow_round).mutate());
+         shadowDrawable.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_dialogBackground), PorterDuff.Mode.MULTIPLY));
+         shadowDrawable.getPadding(padding);
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/SelfStoryViewsView.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/SelfStoryViewsView.java
+index 6aa6280a..e740d105 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/SelfStoryViewsView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/SelfStoryViewsView.java
+@@ -101,7 +101,7 @@ public class SelfStoryViewsView extends FrameLayout {
+         };
+         //selfStoriesPreviewView.setAlpha(0.2f);
+ 
+-        shadowDrawable = context.getResources().getDrawable(R.drawable.sheet_shadow_round).mutate();
++        shadowDrawable = org.telegram.ui.Components.GlassFrameDrawable.wrapSheet(context.getResources().getDrawable(R.drawable.sheet_shadow_round).mutate());
+         ThemeBind.drawableColorFilter(this, shadowDrawable, Theme.key_dialogBackground, resourcesProvider, PorterDuff.Mode.MULTIPLY);
+         viewPagerContainer = new ContainerView(context);
+ 
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/PaintView.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/PaintView.java
+index ef2b334b..8ce414b2 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/PaintView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/PaintView.java
+@@ -4438,7 +4438,7 @@ public class PaintView extends SizeNotifierFrameLayoutPhoto implements IPhotoPai
+         popupWindow.showAtLocation(parent, gravity, x, y);
+         popupWindow.startAnimation(popupLayout);
+ 
+-        Drawable baseDrawable = getContext().getResources().getDrawable(R.drawable.popup_fixed_alert3).mutate();
++        Drawable baseDrawable = org.telegram.ui.Components.GlassFrameDrawable.wrapPopup(getContext().getResources().getDrawable(R.drawable.popup_fixed_alert3).mutate());
+         if (blurAndBounce) {
+             popupLayout.setBackgroundDrawable(
+                 new BlurringShader.StoryBlurDrawer(blurManager, popupLayout, BlurringShader.StoryBlurDrawer.BLUR_TYPE_MENU_BACKGROUND)
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ThemePreviewActivity.java b/TMessagesProj/src/main/java/org/telegram/ui/ThemePreviewActivity.java
+index ae8c518e..a3bfa26d 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ThemePreviewActivity.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ThemePreviewActivity.java
+@@ -1547,7 +1547,7 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
+             }
+ 
+             Rect paddings = new Rect();
+-            sheetDrawable = context.getResources().getDrawable(R.drawable.sheet_shadow_round).mutate();
++            sheetDrawable = org.telegram.ui.Components.GlassFrameDrawable.wrapSheet(context.getResources().getDrawable(R.drawable.sheet_shadow_round).mutate());
+             sheetDrawable.getPadding(paddings);
+             sheetDrawable.setColorFilter(new PorterDuffColorFilter(sheetDrawableColor = getThemedColor(Theme.key_windowBackgroundWhite), PorterDuff.Mode.MULTIPLY));
+ 
