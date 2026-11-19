@@ -8,7 +8,7 @@ ARUMEDIATV loyihasining bir qismi: <https://github.com/ogabekraximov650-del/arug
 |---|---|
 | `upstream/` | `DrKLO/Telegram` (rasmiy Android ilovasi) — **git submodul**, aniq commit'ga qotirilgan (13.2.2). Kod nusxalanmaydi: repo kichik qoladi, yangilash oson |
 | `patches/*.patch` | bizning o'zgarishlarimiz (tartib raqami bilan); yig'ishdan oldin `upstream/` ga qo'llanadi |
-| `.github/workflows/build.yml` | GitHub Actions: submodullarni olish -> patchlarni qo'llash -> APK yig'ish (arm64-v8a) |
+| `.github/workflows/build.yml` | GitHub Actions: submodullarni olish -> patchlarni qo'llash -> APK yig'ish (armeabi-v7a + arm64-v8a) |
 
 ## Qoidalar
 - Yig'ish FAQAT GitHub Actions'da (mahalliy muhitga hech narsa o'rnatilmaydi).
@@ -22,5 +22,5 @@ ARUMEDIATV loyihasining bir qismi: <https://github.com/ogabekraximov650-del/arug
 - Ilova hozircha rasmiy Telegram serverlariga ulanadi. Server almashtirish (ARUMEDIATV worker) — keyingi bosqich.
 
 ## Patchlar
-1. `0001-faqat-arm64.patch` — faqat arm64-v8a (yig'ish tez va kichik).
+1. `0001-arm32-arm64.patch` — faqat armeabi-v7a (32 bit) + arm64-v8a (64 bit).
 2. `0002-shisha-standart-yoqiq.patch` — Liquid Glass + xiralashtirish hamma qurilma sinfida standart yoqiq (`LiteMode` presetlari, `SharedConfig.canBlurChat`). Sinish effekti Android 13+ da; Android 12 da faqat xiralashtirish.

@@ -96,3 +96,22 @@ jobs:
           path: upstream/TMessagesProj_AppStandalone/build/outputs/apk/**/*.apk
           if-no-files-found: error
           retention-days: 14
+
+      # APK ni Telegram'ga yuborish (Bot API, 50 MB gacha). Secret'lar: TG_BOT_TOKEN, TG_CHAT_ID. Yo'q bo'lsa o'tkazib yuboriladi.
+      # 50 MB dan katta bo'lsa 45 MB bo'laklarga bo'linadi (bo'laklar: cat part* > telegram-glass.apk).
+      - name: Telegram'ga yuborish
+        env:
+          BOT: ${{ secrets.TG_BOT_TOKEN }}
+          CHAT: ${{ secrets.TG_CHAT_ID }}
+        run: |
+          if [ -z "$BOT" ] || [ -z "$CHAT" ]; then echo "TG_BOT_TOKEN/TG_CHAT_ID yo'q — o'tkazildi"; exit 0; fi
+          APK=$(find upstream/TMessagesProj_AppStandalone/build/outputs/apk -name '*.apk' | head -1)
+          mkdir -p /tmp/send && cp "$APK" /tmp/send/telegram-glass.apk && cd /tmp/send
+          SIZE=$(stat -c %s telegram-glass.apk)
+          if [ "$SIZE" -le 50000000 ]; then
+            curl -sS -F chat_id="$CHAT" -F caption="Telegram (shisha) 32+64 bit" -F document=@telegram-glass.apk "https://api.telegram.org/bot${BOT}/sendDocument" | head -c 300
+          else
+            split -b 45m -d telegram-glass.apk part. && for f in part.*; do
+              curl -sS -F chat_id="$CHAT" -F caption="$f (cat part.* > telegram-glass.apk)" -F document=@"$f" "https://api.telegram.org/bot${BOT}/sendDocument" | head -c 200; echo
+            done
+          fi
