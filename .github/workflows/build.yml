@@ -1,7 +1,7 @@
 name: Telegram (shisha) — APK yig'ish
 
-# `upstream` (DrKLO/Telegram, submodul) + `patches/*.patch` -> `assembleAfatStandalone` (faqat arm64-v8a: yig'ish vaqti va disk uchun).
-# Natija: `telegram-glass-apk` artifact. Yig'ish FAQAT shu yerda.
+# `upstream` (DrKLO/Telegram, submodul) + `patches/*.patch` -> `assembleAfatStandalone` (armeabi-v7a + arm64-v8a).
+# Natija: GitHub Release (Releases bo'limi) + `telegram-glass-apk` artifact. Yig'ish FAQAT shu yerda.
 on:
   workflow_dispatch: {}
   push:
@@ -13,7 +13,7 @@ on:
       - '.github/workflows/build.yml'
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: build
@@ -96,6 +96,18 @@ jobs:
           path: upstream/TMessagesProj_AppStandalone/build/outputs/apk/**/*.apk
           if-no-files-found: error
           retention-days: 14
+
+      # Release: har yig'ishda yangi `v<run_number>` release, APK fayl sifatida (Releases bo'limidan to'g'ridan-to'g'ri yuklab olinadi).
+      - name: Release yaratish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          APK=$(find upstream/TMessagesProj_AppStandalone/build/outputs/apk -name '*.apk' | head -1)
+          cp "$APK" telegram-glass.apk
+          gh release create "v${{ github.run_number }}" telegram-glass.apk \
+            --repo "${{ github.repository }}" --target "${{ github.sha }}" \
+            --title "Telegram (shisha) #${{ github.run_number }} — 32+64 bit" \
+            --notes "Xira shisha, armeabi-v7a + arm64-v8a. Commit: ${{ github.sha }}"
 
       # APK ni Telegram'ga yuborish (Bot API, 50 MB gacha). Secret'lar: TG_BOT_TOKEN, TG_CHAT_ID. Yo'q bo'lsa o'tkazib yuboriladi.
       # 50 MB dan katta bo'lsa 45 MB bo'laklarga bo'linadi (bo'laklar: cat part* > telegram-glass.apk).
