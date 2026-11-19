@@ -1,0 +1,172 @@
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
+index b8c83792..dae4ce37 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBar.java
+@@ -2431,6 +2431,7 @@ public class ActionBar extends FrameLayout implements FactorAnimator.Target, The
+ 
+ 
+         super.draw(canvas);
++        org.telegram.ui.Components.GlassFrameDrawable.drawBarEdge(canvas, getMeasuredWidth(), getMeasuredHeight());
+     }
+ 
+     @Override
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarPopupWindow.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarPopupWindow.java
+index 06555b0e..3a950385 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarPopupWindow.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarPopupWindow.java
+@@ -162,7 +162,7 @@ public class ActionBarPopupWindow extends PopupWindow {
+             this.resourcesProvider = resourcesProvider;
+ 
+             if (resId != 0) {
+-                backgroundDrawable = getResources().getDrawable(resId).mutate();
++                backgroundDrawable = new org.telegram.ui.Components.GlassFrameDrawable(getResources().getDrawable(resId).mutate(), 10);
+                 setPadding(dp(8), dp(8), dp(8), dp(8));
+             }
+             if (backgroundDrawable != null) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/AlertDialog.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/AlertDialog.java
+index 14e8fbcd..f4a6cc04 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/AlertDialog.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/AlertDialog.java
+@@ -367,7 +367,7 @@ public class AlertDialog extends Dialog implements Drawable.Callback, Notificati
+ 
+         backgroundPaddings = new Rect();
+         if (progressStyle != ALERT_TYPE_SPINNER || blurredBackground) {
+-            shadowDrawable = context.getResources().getDrawable(R.drawable.popup_fixed_alert4).mutate();
++            shadowDrawable = new org.telegram.ui.Components.GlassFrameDrawable(context.getResources().getDrawable(R.drawable.popup_fixed_alert4).mutate(), 18);
+             blurOpacity = progressStyle == ALERT_TYPE_SPINNER ? 0.55f : (isDark ? 0.80f : 0.985f);
+             shadowDrawable.setColorFilter(new PorterDuffColorFilter(backgroundColor, PorterDuff.Mode.MULTIPLY));
+             shadowDrawable.getPadding(backgroundPaddings);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/BottomSheet.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/BottomSheet.java
+index d4448846..d6e8aeed 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/BottomSheet.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/BottomSheet.java
+@@ -1353,7 +1353,7 @@ public class BottomSheet extends Dialog implements BaseFragment.AttachedSheet {
+         touchSlop = vc.getScaledTouchSlop();
+ 
+         Rect padding = new Rect();
+-        shadowDrawable = new FilterTrackingDrawable(context.getResources().getDrawable(R.drawable.sheet_shadow_round).mutate());
++        shadowDrawable = new org.telegram.ui.Components.GlassFrameDrawable(new FilterTrackingDrawable(context.getResources().getDrawable(R.drawable.sheet_shadow_round).mutate()), 16);
+         shadowDrawable.setColorFilter(themedBackgroundFilter = new PorterDuffColorFilter(internalBackgroundColor = getThemedColor(Theme.key_dialogBackground), PorterDuff.Mode.MULTIPLY));
+         shadowDrawable.getPadding(padding);
+         backgroundPaddingLeft = padding.left;
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
+index 7fc7292d..ff11f5f9 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/Theme.java
+@@ -4866,7 +4866,13 @@ public class Theme {
+                 new int[][]{StateSet.WILD_CARD},
+                 new int[]{pressedColor}
+         );
+-        return new BaseCell.RippleDrawableSafe(colorStateList, defaultDrawable, pressedDrawable);
++        Drawable content = defaultDrawable;
++        final float glassRad = Math.min(Math.min(rad[0], rad[2]), Math.min(rad[4], rad[6]));
++        if (glassRad >= dp(8) && Color.alpha(defaultColor) > 0) {
++            // UZ: yumaloq tugma/karta ustiga QR shisha qirrasi. EN: QR glass rim on rounded buttons/cards. RU: obodok stekla na knopkah/kartochkah.
++            content = new org.telegram.ui.Components.GlassFrameDrawable(defaultDrawable, glassRad, true);
++        }
++        return new BaseCell.RippleDrawableSafe(colorStateList, content, pressedDrawable);
+     }
+ 
+     public static Drawable createSelectorDrawableFromDrawables(Drawable normal, Drawable pressed) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/GlassFrameDrawable.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/GlassFrameDrawable.java
+new file mode 100644
+index 00000000..1eb5365c
+--- /dev/null
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/GlassFrameDrawable.java
+@@ -0,0 +1,96 @@
++package org.telegram.ui.Components;
++
++import static org.telegram.messenger.AndroidUtilities.dp;
++
++import android.graphics.Canvas;
++import android.graphics.ColorFilter;
++import android.graphics.Rect;
++import android.graphics.RectF;
++import android.graphics.drawable.Drawable;
++import android.graphics.drawable.DrawableWrapper;
++
++import org.telegram.ui.QrShare.QrGlass;
++
++/**
++ * UZ: Ichki fon (dialog, sheet, menyu) ustiga QR ekranidagi shisha: yaltiroq qatlam + qirra (rim). Android 10+ da ishlaydi.
++ * EN: The QR screen glass (top sheen + baked rim) drawn over an inner background (dialog, sheet, popup). Android 10+.
++ * RU: Steklo ekrana QR (blik + obodok) poverkh vnutrennego fona (dialog, sheet, menyu). Android 10+.
++ */
++public class GlassFrameDrawable extends DrawableWrapper {
++
++    private final float radius;
++    private final boolean radiusIsPx;
++    private final RectF rect = new RectF();
++    private final Rect pad = new Rect();
++    private int alpha = 255;
++
++    public GlassFrameDrawable(Drawable inner, float radiusDp) {
++        this(inner, radiusDp, false);
++    }
++
++    public GlassFrameDrawable(Drawable inner, float radius, boolean radiusIsPx) {
++        super(inner);
++        this.radius = radius;
++        this.radiusIsPx = radiusIsPx;
++    }
++
++    @Override
++    public void draw(Canvas canvas) {
++        super.draw(canvas);
++        try {
++            final Drawable inner = getDrawable();
++            if (inner == null) {
++                return;
++            }
++            pad.setEmpty();
++            inner.getPadding(pad);
++            final Rect b = getBounds();
++            rect.set(b.left + pad.left, b.top + pad.top, b.right - pad.right, b.bottom - pad.bottom);
++            if (rect.width() < dp(8) || rect.height() < dp(8)) {
++                return;
++            }
++            final float rad = Math.min(radiusIsPx ? radius : dp(radius), Math.min(rect.width(), rect.height()) / 2f);
++            final float a = alpha / 255f;
++            QrGlass.drawSheenRound(canvas, rect, rad, false, a);
++            QrGlass.drawRim(canvas, rect, rad, QrGlass.RIM_BIG, a);
++        } catch (Throwable ignore) {
++        }
++    }
++
++    @Override
++    public void setAlpha(int alpha) {
++        this.alpha = alpha;
++        super.setAlpha(alpha);
++    }
++
++    @Override
++    public ColorFilter getColorFilter() {
++        final Drawable inner = getDrawable();
++        return inner != null ? inner.getColorFilter() : null;
++    }
++
++    /** UZ: Panel (ActionBar) ostki chizig'i. EN: bottom edge line of a bar. RU: nizhnyaya liniya paneli. */
++    public static void drawBarEdge(Canvas canvas, int width, int height) {
++        if (width <= 0 || height <= 0) {
++            return;
++        }
++        try {
++            final RectF r = AndroidUtilitiesRect.get();
++            final float ext = dp(30);
++            r.set(-ext, -ext, width + ext, height);
++            canvas.save();
++            canvas.clipRect(0, 0, width, height);
++            QrGlass.drawRim(canvas, r, dp(18), QrGlass.RIM_BIG, 0.8f);
++            canvas.restore();
++        } catch (Throwable ignore) {
++        }
++    }
++
++    private static final class AndroidUtilitiesRect {
++        private static final RectF RECT = new RectF();
++
++        static RectF get() {
++            return RECT;
++        }
++    }
++}
