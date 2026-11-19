@@ -3,6 +3,7 @@ name: Telegram (shisha) — APK yig'ish
 # `upstream` (DrKLO/Telegram, submodul) + `patches/*.patch` -> `assembleAfatStandalone` (faqat arm64-v8a: yig'ish vaqti va disk uchun).
 # Natija: `telegram-glass-apk` artifact. Yig'ish FAQAT shu yerda.
 on:
+  workflow_dispatch: {}
   push:
     branches: [main]
     paths:
@@ -61,6 +62,24 @@ jobs:
             git apply --whitespace=nowarn "$p"
           done
           git status --short | head
+
+      # api_id / api_hash MAXFIY: repo ochiq, shuning uchun kodga yozilmaydi — Settings -> Secrets and variables -> Actions dagi `TG_API_ID`, `TG_API_HASH` dan
+      # yig'ish paytida `BuildVars.java` ga qo'yiladi. Secret yo'q bo'lsa Telegram'ning standart (sinov) qiymati qoladi.
+      - name: API ID / HASH
+        working-directory: upstream
+        env:
+          TG_API_ID: ${{ secrets.TG_API_ID }}
+          TG_API_HASH: ${{ secrets.TG_API_HASH }}
+        run: |
+          F=TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java
+          if [ -n "$TG_API_ID" ] && [ -n "$TG_API_HASH" ]; then
+            sed -i "s/public static int APP_ID = [0-9]*;/public static int APP_ID = ${TG_API_ID};/" "$F"
+            sed -i "s/public static String APP_HASH = \"[0-9a-f]*\";/public static String APP_HASH = \"${TG_API_HASH}\";/" "$F"
+            echo "api_id/api_hash secret'dan qo'yildi"
+          else
+            echo "::warning::TG_API_ID/TG_API_HASH secret yo'q — Telegram'ning standart api_id si ishlatiladi"
+          fi
+          grep -c 'APP_ID = ' "$F" > /dev/null
 
       - uses: gradle/actions/setup-gradle@v6
 

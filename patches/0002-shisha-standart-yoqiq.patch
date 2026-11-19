@@ -1,0 +1,62 @@
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/LiteMode.java b/TMessagesProj/src/main/java/org/telegram/messenger/LiteMode.java
+index 37619e6c..69ce9926 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/LiteMode.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/LiteMode.java
+@@ -60,8 +60,9 @@ public class LiteMode {
+         FLAG_ANIMATED_EMOJI_REACTIONS_PREMIUM |
+         FLAG_AUTOPLAY_GIFS |
+         FLAG_CHAT_THANOS |
+-        FLAG_PARTICLES
+-    ); // 198684
++        FLAG_PARTICLES |
++        FLAG_LIQUID_GLASS | FLAG_CHAT_BLUR
++    ); // 198684 (+ shisha: arugramglass)
+     public static int PRESET_MEDIUM = (
+         FLAGS_ANIMATED_STICKERS |
+         FLAG_ANIMATED_EMOJI_KEYBOARD_PREMIUM |
+@@ -72,8 +73,9 @@ public class LiteMode {
+         FLAG_AUTOPLAY_VIDEOS |
+         FLAG_AUTOPLAY_GIFS |
+         FLAG_CHAT_THANOS |
+-        FLAG_PARTICLES
+-    ); // 204383
++        FLAG_PARTICLES |
++        FLAG_LIQUID_GLASS | FLAG_CHAT_BLUR
++    ); // 204383 (+ shisha: arugramglass)
+     public static int PRESET_HIGH = (
+         FLAGS_ANIMATED_STICKERS |
+         FLAGS_ANIMATED_EMOJI |
+@@ -86,8 +88,9 @@ public class LiteMode {
+         FLAG_CALLS_ANIMATIONS |
+         FLAG_AUTOPLAY_VIDEOS |
+         FLAG_AUTOPLAY_GIFS |
+-        FLAG_PARTICLES
+-    ); // 262143
++        FLAG_PARTICLES |
++        FLAG_LIQUID_GLASS
++    ); // 262143 (+ shisha: arugramglass)
+     public static int PRESET_POWER_SAVER = 0;
+ 
+     private static int BATTERY_LOW = 10;
+@@ -271,7 +274,6 @@ public class LiteMode {
+         if (!preferences.contains("lite_mode6")) {
+             if (preferences.contains("lite_mode5")) {
+                 defaultValue = preferences.getInt("lite_mode5", defaultValue);
+-                defaultValue &=~ FLAG_LIQUID_GLASS;
+                 preferences.edit().putInt("lite_mode6", defaultValue).apply();
+             } else if (preferences.contains("lite_mode4")) {
+                 defaultValue = preferences.getInt("lite_mode4", defaultValue);
+diff --git a/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java b/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java
+index 85ab1d8a..427cd991 100644
+--- a/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java
++++ b/TMessagesProj/src/main/java/org/telegram/messenger/SharedConfig.java
+@@ -1754,7 +1754,8 @@ public class SharedConfig {
+     }
+ 
+     public static boolean canBlurChat() {
+-        return getDevicePerformanceClass() >= (Build.VERSION.SDK_INT >= 31 ? PERFORMANCE_CLASS_AVERAGE : PERFORMANCE_CLASS_HIGH) || BuildVars.DEBUG_PRIVATE_VERSION;
++        // arugramglass: shisha/xiralashtirish qurilma sinfidan qat'i nazar (Android 12+)
++        return Build.VERSION.SDK_INT >= 31 || BuildVars.DEBUG_PRIVATE_VERSION;
+     }
+ 
+     public static boolean chatBlurEnabled() {
