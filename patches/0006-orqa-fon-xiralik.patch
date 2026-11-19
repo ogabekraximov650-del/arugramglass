@@ -1,0 +1,170 @@
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarPopupWindow.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarPopupWindow.java
+index 3a950385..2e434104 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarPopupWindow.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarPopupWindow.java
+@@ -530,6 +530,7 @@ public class ActionBarPopupWindow extends PopupWindow {
+                         rect.set(AndroidUtilities.rectTmp2.right, AndroidUtilities.rectTmp2.top, AndroidUtilities.rectTmp2.right, AndroidUtilities.rectTmp2.top);
+                         AndroidUtilities.lerp(rect, AndroidUtilities.rectTmp2, reactionsEnterProgress, AndroidUtilities.rectTmp2);
+                     }
++                    backgroundDrawable.setCallback(this);
+                     backgroundDrawable.setBounds(AndroidUtilities.rectTmp2);
+                     backgroundDrawable.draw(canvas);
+                     if (clipChildren) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/AlertDialog.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/AlertDialog.java
+index f4a6cc04..d47867ce 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/AlertDialog.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/AlertDialog.java
+@@ -674,6 +674,7 @@ public class AlertDialog extends Dialog implements Drawable.Callback, Notificati
+         @Override
+         protected void dispatchDraw(Canvas canvas) {
+             if (drawBackground && !blurredBackground) {
++                shadowDrawable.setCallback(this);
+                 shadowDrawable.setBounds(0, 0, getMeasuredWidth(), getMeasuredHeight());
+                 if (topView != null && notDrawBackgroundOnTopView) {
+                     int clipTop = topView.getBottom();
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/GlassFrameDrawable.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/GlassFrameDrawable.java
+index c517ab30..715c60b3 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/GlassFrameDrawable.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/GlassFrameDrawable.java
+@@ -2,13 +2,21 @@ package org.telegram.ui.Components;
+ 
+ import static org.telegram.messenger.AndroidUtilities.dp;
+ 
++import android.graphics.Bitmap;
+ import android.graphics.Canvas;
+ import android.graphics.ColorFilter;
++import android.graphics.Paint;
++import android.graphics.Path;
+ import android.graphics.Rect;
+ import android.graphics.RectF;
+ import android.graphics.drawable.Drawable;
+ import android.graphics.drawable.DrawableWrapper;
+ 
++import android.os.SystemClock;
++import android.view.View;
++
++import org.telegram.messenger.Utilities;
++import org.telegram.ui.LaunchActivity;
+ import org.telegram.ui.QrShare.QrGlass;
+ 
+ /**
+@@ -36,20 +44,23 @@ public class GlassFrameDrawable extends DrawableWrapper {
+ 
+     @Override
+     public void draw(Canvas canvas) {
++        Rect b = getBounds();
++        final Drawable inner = getDrawable();
++        pad.setEmpty();
++        if (inner != null) {
++            inner.getPadding(pad);
++        }
++        rect.set(b.left + pad.left, b.top + pad.top, b.right - pad.right, b.bottom - pad.bottom);
++        final boolean ok = inner != null && rect.width() >= dp(8) && rect.height() >= dp(8);
++        final float rad = ok ? Math.min(radiusIsPx ? radius : dp(radius), Math.min(rect.width(), rect.height()) / 2f) : 0;
++        if (ok) {
++            drawBackdrop(canvas, rad);
++        }
+         super.draw(canvas);
++        if (!ok) {
++            return;
++        }
+         try {
+-            final Drawable inner = getDrawable();
+-            if (inner == null) {
+-                return;
+-            }
+-            pad.setEmpty();
+-            inner.getPadding(pad);
+-            final Rect b = getBounds();
+-            rect.set(b.left + pad.left, b.top + pad.top, b.right - pad.right, b.bottom - pad.bottom);
+-            if (rect.width() < dp(8) || rect.height() < dp(8)) {
+-                return;
+-            }
+-            final float rad = Math.min(radiusIsPx ? radius : dp(radius), Math.min(rect.width(), rect.height()) / 2f);
+             final float a = alpha / 255f;
+             QrGlass.drawSheenRound(canvas, rect, rad, false, a);
+             QrGlass.drawRim(canvas, rect, rad, QrGlass.RIM_BIG, a);
+@@ -57,6 +68,83 @@ public class GlassFrameDrawable extends DrawableWrapper {
+         }
+     }
+ 
++    // UZ: Orqadagi ekranning xiralashtirilgan nusxasi (1/8 masshtab + stack blur), shisha ostiga chiziladi. Android 6+.
++    // EN: A blurred copy of the screen behind (1/8 scale + stack blur) drawn under the glass.
++    // RU: Razmytaya kopiya ekrana pod steklom (masshtab 1/8 + stack blur).
++    private static final int BACKDROP_SCALE = 8;
++    private static Bitmap backdrop;
++    private static long backdropTime;
++    private static boolean capturing;
++    private final Path clipPath = new Path();
++    private final int[] loc = new int[2];
++    private final Paint backdropPaint = new Paint(Paint.FILTER_BITMAP_FLAG);
++
++    private static Bitmap getBackdrop() {
++        if (capturing) {
++            return backdrop;
++        }
++        final long now = SystemClock.uptimeMillis();
++        if (backdrop != null && now - backdropTime < 1500) {
++            return backdrop;
++        }
++        final LaunchActivity activity = LaunchActivity.instance;
++        if (activity == null || activity.getWindow() == null) {
++            return backdrop;
++        }
++        final View root = activity.getWindow().getDecorView();
++        final int w = root.getWidth(), h = root.getHeight();
++        if (w <= 0 || h <= 0) {
++            return backdrop;
++        }
++        final int bw = Math.max(1, w / BACKDROP_SCALE), bh = Math.max(1, h / BACKDROP_SCALE);
++        Bitmap bmp = backdrop;
++        try {
++            if (bmp == null || bmp.getWidth() != bw || bmp.getHeight() != bh) {
++                bmp = Bitmap.createBitmap(bw, bh, Bitmap.Config.ARGB_8888);
++            }
++            bmp.eraseColor(0);
++            capturing = true;
++            try {
++                final Canvas c = new Canvas(bmp);
++                c.scale(1f / BACKDROP_SCALE, 1f / BACKDROP_SCALE);
++                root.draw(c);
++            } catch (Throwable ignore) {
++            } finally {
++                capturing = false;
++            }
++            Utilities.stackBlurBitmap(bmp, 8);
++            backdrop = bmp;
++            backdropTime = now;
++        } catch (Throwable ignore) {
++        }
++        return backdrop;
++    }
++
++    private void drawBackdrop(Canvas canvas, float rad) {
++        final Callback cb = getCallback();
++        if (!(cb instanceof View) || capturing) {
++            return;
++        }
++        try {
++            final View view = (View) cb;
++            final Bitmap bmp = getBackdrop();
++            if (bmp == null) {
++                return;
++            }
++            view.getLocationOnScreen(loc);
++            clipPath.rewind();
++            clipPath.addRoundRect(rect, rad, rad, Path.Direction.CW);
++            canvas.save();
++            canvas.clipPath(clipPath);
++            canvas.translate(-loc[0], -loc[1]);
++            canvas.scale(BACKDROP_SCALE, BACKDROP_SCALE);
++            backdropPaint.setAlpha(alpha);
++            canvas.drawBitmap(bmp, 0, 0, backdropPaint);
++            canvas.restore();
++        } catch (Throwable ignore) {
++        }
++    }
++
+     @Override
+     public void setAlpha(int alpha) {
+         this.alpha = alpha;
