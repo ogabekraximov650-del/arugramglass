@@ -1,0 +1,66 @@
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+index 266e5709..320d51b1 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/ChatActivityEnterView.java
+@@ -15400,6 +15400,7 @@ public class ChatActivityEnterView extends FrameLayout implements
+             checkBackgroundRect();
+             if (isNewDesignSendButton) {
+                 canvas.drawRoundRect(backgroundRect, dp(RADIUS), dp(RADIUS), backgroundPaint);
++                GlassFrameDrawable.drawGlassRect(null, canvas, backgroundRect, dp(RADIUS));
+             }
+ 
+             final boolean inactive = isInactive();
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Views/StoryLinkPreviewDialog.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Views/StoryLinkPreviewDialog.java
+index 4e330b4a..2d074d91 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Views/StoryLinkPreviewDialog.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Paint/Views/StoryLinkPreviewDialog.java
+@@ -155,7 +155,7 @@ public class StoryLinkPreviewDialog extends Dialog {
+         containerView.addView(previewContainer, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 1, Gravity.CENTER_HORIZONTAL | Gravity.TOP, 0, 0, 0, 0));
+ 
+         actionBarContainer = new FrameLayout(context);
+-        actionBarContainer.setBackgroundColor(0xFF1F1F1F);
++        actionBarContainer.setBackground(new org.telegram.ui.Components.GlassFrameDrawable(new android.graphics.drawable.ColorDrawable(0xE01F1F1F), 0));
+         previewContainer.addView(actionBarContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 56, Gravity.FILL_HORIZONTAL | Gravity.TOP));
+ 
+         titleTextView = new TextView(context);
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/CustomEmojiReactionsWindow.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/CustomEmojiReactionsWindow.java
+index fb10dd10..c5fc931c 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/CustomEmojiReactionsWindow.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/Reactions/CustomEmojiReactionsWindow.java
+@@ -898,6 +898,7 @@ public class CustomEmojiReactionsWindow {
+                 } else {
+                     shadow.draw(canvas);
+                     canvas.drawRoundRect(drawingRect, radius, radius, backgroundPaint);
++                    org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, drawingRect, radius);
+                 }
+             }
+             if (reactionsContainerLayout.hintView != null) {
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/MessageSendPreview.java b/TMessagesProj/src/main/java/org/telegram/ui/MessageSendPreview.java
+index 73989ddf..9637f90e 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/MessageSendPreview.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/MessageSendPreview.java
+@@ -1955,6 +1955,7 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
+         );
+         canvas.save();
+         canvas.drawRoundRect(AndroidUtilities.rectTmp, buttonHeight / 2f, buttonHeight / 2f, buttonBgPaint);
++        org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, AndroidUtilities.rectTmp, buttonHeight / 2f);
+         buttonText.draw(canvas, cx - buttonWidth / 2f + dp(14), cy, 0xFFFFFFFF, 1f);
+         canvas.restore();
+     }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/StoryThemeSheet.java b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/StoryThemeSheet.java
+index 9731441e..f2f1fda2 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/StoryThemeSheet.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Stories/recorder/StoryThemeSheet.java
+@@ -25,6 +25,12 @@ import org.telegram.ui.Components.LayoutHelper;
+ 
+ public class StoryThemeSheet extends FrameLayout {
+ 
++    @Override
++    protected void dispatchDraw(android.graphics.Canvas canvas) {
++        super.dispatchDraw(canvas);
++        org.telegram.ui.Components.GlassFrameDrawable.drawGlassRect(null, canvas, new android.graphics.RectF(0, 0, getWidth(), getHeight()), org.telegram.messenger.AndroidUtilities.dp(14));
++    }
++
+     private final ImageView backButtonView;
+     private final BackDrawable backButtonDrawable;
+ 
