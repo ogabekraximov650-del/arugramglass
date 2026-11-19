@@ -1,0 +1,65 @@
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java
+index 7b3d8538..4af61c63 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/ActionBarLayout.java
+@@ -220,6 +220,7 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
+                     headerShadowDrawable.setAlpha(wasAlpha);
+                 }
+                 drawNavigationBarGradient(canvas, lastFragment);
++                org.telegram.ui.Components.GlassFrameDrawable.drawScreenFrame(canvas, getMeasuredWidth(), getMeasuredHeight());
+                 return result;
+             }
+         }
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/MessageDrawable.java b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/MessageDrawable.java
+index a5c1589e..91aec746 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/MessageDrawable.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/ActionBar/MessageDrawable.java
+@@ -647,6 +647,9 @@ public class MessageDrawable extends Drawable {
+         }
+ 
+         canvas.drawPath(path, p);
++        if (paintToUse == null) {
++            org.telegram.ui.Components.GlassFrameDrawable.drawBubbleRim(canvas, bounds);
++        }
+         if (gradientShader != null && isSelected && paintToUse == null) {
+             int color = getColor(Theme.key_chat_outBubbleGradientSelectedOverlay);
+             selectedPaint.setColor(ColorUtils.setAlphaComponent(color, (int) (Color.alpha(color) * alpha / 255f)));
+diff --git a/TMessagesProj/src/main/java/org/telegram/ui/Components/GlassFrameDrawable.java b/TMessagesProj/src/main/java/org/telegram/ui/Components/GlassFrameDrawable.java
+index 1eb5365c..c517ab30 100644
+--- a/TMessagesProj/src/main/java/org/telegram/ui/Components/GlassFrameDrawable.java
++++ b/TMessagesProj/src/main/java/org/telegram/ui/Components/GlassFrameDrawable.java
+@@ -86,6 +86,34 @@ public class GlassFrameDrawable extends DrawableWrapper {
+         }
+     }
+ 
++    private static final RectF SCREEN_RECT = new RectF();
++
++    /** UZ: Butun ekran ramkasi (yuqori yaltiroq + qirra). EN: whole-screen frame (top sheen + rim). RU: ramka vsego ekrana. */
++    public static void drawScreenFrame(Canvas canvas, int width, int height) {
++        if (width <= 0 || height <= 0) {
++            return;
++        }
++        try {
++            SCREEN_RECT.set(dp(1), dp(1), width - dp(1), height - dp(1));
++            final float r = dp(24);
++            QrGlass.drawSheenRound(canvas, SCREEN_RECT, r, false, 0.7f);
++            QrGlass.drawRim(canvas, SCREEN_RECT, r, QrGlass.RIM_BIG, 0.5f);
++        } catch (Throwable ignore) {
++        }
++    }
++
++    /** UZ: Xabar pufakchasi qirrasi. EN: chat bubble rim. RU: obodok puzyrya soobshcheniya. */
++    public static void drawBubbleRim(Canvas canvas, Rect bounds) {
++        if (bounds == null || bounds.height() < dp(24) || bounds.width() < dp(24)) {
++            return;
++        }
++        try {
++            SCREEN_RECT.set(bounds.left + dp(2), bounds.top + dp(2), bounds.right - dp(2), bounds.bottom - dp(2));
++            QrGlass.drawRim(canvas, SCREEN_RECT, dp(14), QrGlass.RIM_BIG, 0.55f);
++        } catch (Throwable ignore) {
++        }
++    }
++
+     private static final class AndroidUtilitiesRect {
+         private static final RectF RECT = new RectF();
+ 
